@@ -7,26 +7,33 @@ from operationHandlers import generate_module_handler as module_h
 from operationHandlers import generate_model_handler as model_h
 from operationHandlers import generate_security_handler as sec_h
 from operationHandlers import generate_view_handler as view_h
+from operationHandlers import send_help
 
+assert len(sys.argv) > 1, send_help()
 
 action = sys.argv[1]
 detail = sys.argv[2]
 name = sys.argv[3] if len(sys.argv) >= 4 else ''
 is_application = sys.argv[4] if len(sys.argv) >= 5 else ''
 
+
 def handle_non_existent():
 	print("This function does not exist...")
+
 
 def handle_generate(what_to_generate: str, name: str, is_application: bool):
 
 	match what_to_generate:
 		case 'module' | 'm':
 			module_h.handle_generate_module(name, is_application)
-		case 'view' | 'v':
+		
+        case 'view' | 'v':
 			view_h.handle_generate_view(name)
-		case 'model' | 'M': 
+		
+        case 'model' | 'M': 
 			model_h.handle_generate_model(name)
-		case 'security' | 's':
+		
+        case 'security' | 's':
 			sec_h.handle_generate_security(name)
 
 
