@@ -39,7 +39,6 @@ from . import wizards
 
 	with open(module_path + f"/models/{module_name.replace(' ', '_')}.py", 'w') as models_base_file:
 		models_base_file.write(f"""from odoo import api, fields, models
-from odoo.exceptions import UserError
 
 import logging
 _logger = logging.getLogger(__name__)
