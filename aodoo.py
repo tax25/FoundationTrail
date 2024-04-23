@@ -27,16 +27,18 @@ is_application = _get_param_from_command_line(4, sys.argv)
 
 
 def handle_non_existent():
-    print("This function does not exist...")
+    print("The function you inserted does not exist! Here's some help:")
+    send_help()
 
 
 def handle_generate(what_to_generate: str, name: str, is_application: bool):
-
+    print("sono dentro l'handle generate")
     match what_to_generate:
         case 'module' | 'm':
             module_h.handle_generate_module(name, is_application)
         
         case 'view' | 'v':
+            print("handle generate view")
             view_h.handle_generate_view(name)
         
         case 'model' | 'M': 
@@ -56,8 +58,7 @@ def main(given_action: str, given_detail: str, given_name: str, is_application: 
 
 
 if __name__ == '__main__':
-    print("ciao sono dentro il primo if...")
     if (action in ['generate', 'g'] and detail in ['module', 'm']):
         assert is_application in ['true', 'True', 'false', 'False', '', False], "is_application is not a value between 'true', 'True', 'false' and 'False'"
-    
+    print('sono qui... nel primo if') 
     main(action, detail, name, True if is_application in ['true', 'True'] else False)

@@ -28,7 +28,7 @@ from . import wizards
 	'name': '{module_name.replace('_', ' ')}',
 	'version': '0.1',
 	'depends': ['base'],
-	'author': 'Sydea - Andrea Tasselli',
+	'author': '{os.getlogin()}',
 	'application': {is_application},
 	'data': [],
 }}
