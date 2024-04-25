@@ -3,6 +3,7 @@ import json
 
 MANIFEST_FILENAME = '__manifest__.py'
 
+
 def handle_generate_view(view_name: str) -> int:
     
     # check if user is in a directory
@@ -69,6 +70,7 @@ def handle_generate_view(view_name: str) -> int:
 
         print(stuff)
     print("View file created and added to the __manifest__.py")
+
 
 def _handle_eventual_views_dir_creation() -> int: 
     print("The views directory has not been found")

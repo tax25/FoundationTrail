@@ -29,7 +29,6 @@ def handle_generate(what_to_generate: str, name: str, is_application: bool):
             module_h.handle_generate_module(name, is_application)
         
         case 'view' | 'v':
-            print("handle generate view")
             view_h.handle_generate_view(name)
         
         case 'model' | 'M': 
