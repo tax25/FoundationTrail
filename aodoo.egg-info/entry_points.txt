@@ -1,2 +1,0 @@
-[console_scripts]
-aodoo = aodoo.__main__:aodoo_entrypoint
