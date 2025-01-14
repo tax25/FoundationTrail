@@ -1,0 +1,6 @@
+Metadata-Version: 2.1
+Name: aodoo
+Version: 0.0.5a0
+Summary: A package that allows you to focus only on odoo development and not on module creation
+Author-email: Andrea Tasselli <andreatax25@gmail.com>
+Requires-Python: >=3.11

@@ -1,0 +1,19 @@
+[build-system]
+requires = ['setuptools']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'aodoo'
+dynamic = ["version"]
+authors = [
+		{name = 'Andrea Tasselli', email = 'andreatax25@gmail.com'}
+	]
+description = 'A package that allows you to focus only on odoo development and not on module creation'
+requires-python = '>=3.11'
+
+
+[project.scripts]
+aodoo = 'aodoo.__main__:aodoo_entrypoint'
+
+[tool.setuptools.dynamic]
+version = { attr = "aodoo.__version__"}
