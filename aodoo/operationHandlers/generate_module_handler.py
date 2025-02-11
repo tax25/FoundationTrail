@@ -23,11 +23,13 @@ _logger = logging.getLogger(__name__)
 
 SECURITY_FILE_CONTENTS = 'id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink\n'
 
-def handle_generate_module(module_name, is_application):
+def handle_generate_module(name, is_application):
 
-	assert module_name != False, "Did not pass the module name!"
+	assert name != False, "Did not pass the module name!"
 
 	assert os.path.isdir(module_name) == False, "Module with same name already exists!"
+	
+	module_name = re.sub(r'(?<!^)(?=[A-Z])', '_', name.replace(' ', '_')).lower()
 	
 	print(f"Generating new {'application' if is_application else 'module'}: {module_name}")
 

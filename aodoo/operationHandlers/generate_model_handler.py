@@ -24,9 +24,11 @@ SECURITY_FILE_CONTENTS = "\naccess_{model_name},access_{model_name},model_{model
 # @todo(If an exception is detected, then delete all the files that were created [and, if possible, also delete modifications to existing files *]) 
 # * => so that means that we write to file only at the very end of the function.
 
-def handle_generate_model(model_name: str):
+def handle_generate_model(name: str):
     
-    assert model_name != False, "Did not pass the model name!"
+    assert model_name != False and model_name != None, "Did not pass the model name!"
+
+    model_name = re.sub(r'(?<!^)(?=[A-Z])', '_', name.replace(' ', '_')).lower()
 
     model_created = False
     model_added_to_init = False
