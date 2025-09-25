@@ -1,4 +1,5 @@
 import os
+import re
 
 INIT_FILENAME = '__init__.py'
 SECURITY_FILENAME = 'ir.model.access.csv'
@@ -14,7 +15,7 @@ MODEL_FILE_CONTENTS = """from odoo import api, fields, models
 import logging
 _logger = logging.getLogger(__name__)
 
-class {model_class}(models.Model):
+class {model_class}(models.{model_type}):
     _name = '{model_name}'
 """
 
@@ -24,36 +25,45 @@ SECURITY_FILE_CONTENTS = "\naccess_{model_name},access_{model_name},model_{model
 # @todo(If an exception is detected, then delete all the files that were created [and, if possible, also delete modifications to existing files *]) 
 # * => so that means that we write to file only at the very end of the function.
 
-def handle_generate_model(name: str):
+def handle_generate_model(name: str, type: str, is_wizard: bool, cli_perms: str):
     
-    assert model_name != False and model_name != None, "Did not pass the model name!"
+    assert name != False and name != None, "Did not pass the model name!"
 
     model_name = re.sub(r'(?<!^)(?=[A-Z])', '_', name.replace(' ', '_')).lower()
-
+    model_type = re.sub('^(M|m)odels?.?', '', type).capitalize() if type else 'Model'
+    
     model_created = False
     model_added_to_init = False
     model_added_to_security = False
-    perms = DEFAULT_PERMS
+    perms = None
+    if cli_perms:
+        cli_perms = cli_perms.split(',')
+        perms = {
+            'perm_read': cli_perms[0],
+            'perm_write': cli_perms[1],
+            'perm_create': cli_perms[2],
+            'perm_unlink': cli_perms[3],
+        }
     
     file_name_and_path = ''
     if 'models' in os.getcwd():
         file_name_and_path = os.getcwd() + f'/{model_name}.py'
-    elif os.path.exists(os.getcwd() + '/models'):
-        file_name_and_path = os.getcwd() + f'/models/{model_name}.py'
+    elif os.path.exists(os.getcwd() + f"/{'models' if not is_wizard else 'wizards'}"):
+        file_name_and_path = os.getcwd() + f"/{'models' if not is_wizard else 'wizards'}/{model_name}.py"
     else:
         print(f"Cannot find /models directory so creating the file in current directory ({os.getcwd()})")
-        file_name_and_path = os.getcwd() + f'/{model_name}.py'
+        file_name_and_path = os.getcwd() + f"/{'models' if not is_wizard else 'wizards'}/{model_name}.py"
 
     with open(file_name_and_path, 'w') as model_file:
-        model_file.write(MODEL_FILE_CONTENTS.format(model_class=model_name.replace('_', ' ').title().replace(' ', ''), model_name=model_name.replace('_', '.')))
+        model_file.write(MODEL_FILE_CONTENTS.format(model_class=model_name.replace('_', ' ').title().replace(' ', ''), model_name=model_name.replace('_', '.'), model_type=model_type))
         print(f"Model created in {file_name_and_path}")
         
     # add file to __init__
     init_file_path = None
-    if 'models' in os.getcwd() and os.path.isfile(INIT_FILENAME):
+    if f"{'models' if not is_wizard else 'wizards'}" in os.getcwd() and os.path.isfile(INIT_FILENAME):
         init_file_path = INIT_FILENAME
-    elif os.path.isfile(os.getcwd() + f'/models/{INIT_FILENAME}'):
-        init_file_path = f'models/{INIT_FILENAME}'
+    elif os.path.isfile(os.getcwd() + f"/{'models' if not is_wizard else 'wizards'}/{INIT_FILENAME}"):
+        init_file_path = f"{'models' if not is_wizard else 'wizards'}/{INIT_FILENAME}"
 
     if init_file_path:
         with open(init_file_path, 'a') as init_file:

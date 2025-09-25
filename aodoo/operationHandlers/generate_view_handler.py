@@ -18,23 +18,24 @@ END_DIRECTORY = _get_end_directory()
 BASIC_VIEW_FILE_STRING = ''
 INHERIT_VIEW_FILE_STRING = ''
 
-def handle_generate_view(view_name: str, model: str, inherit_id: str):
-    
+def handle_generate_view(view_name: str, model: str, inherit_id: str, is_for_wizard: bool):
     # create file
-    file_name = f'views/{view_name}.xml'
+    file_name = f"{'views' if not is_for_wizard else 'wizards'}/{view_name}.xml"
     file_name_and_path = ''
-    if 'views' in os.getcwd():
+    
+    if f"{'views' if not is_for_wizard else 'wizards'}" in os.getcwd():
         file_name_and_path = os.getcwd() + f'/{view_name}.xml'
-    elif os.path.exists(os.getcwd() + '/views'):
-        file_name_and_path = os.getcwd() + f'/views/{view_name}.xml'
-    elif os.path.exists(os.getcwd() + '../views'): # in case the user is in the models directory for example
-        file_name_and_path = os.getcwd() + f'/../views/{view_name}.xml'
+    elif os.path.exists(os.getcwd() + f"/{'views' if not is_for_wizard else 'wizards'}"):
+        file_name_and_path = os.getcwd() + f"/{'views' if not is_for_wizard else 'wizards'}/{view_name}.xml"
+    elif os.path.exists(os.getcwd() + f"../{'views' if not is_for_wizard else 'wizards'}"): # in case the user is in the models directory for example
+        file_name_and_path = os.getcwd() + f'/../{'views' if not is_for_wizard else 'wizards'}/{view_name}.xml'
     else:
-        print(f"Cannot find /views directory so creating the file in current directory ({os.getcwd()})")
+        print(f"Cannot find /{'views' if not is_for_wizard else 'wizards'} directory so creating the file in current directory ({os.getcwd()})")
         file_name = f'{view_name}.xml'
         file_name_and_path = os.getcwd() + f'/{view_name}.xml'
 
-    with open(file_name_and_path, 'w') as view_file:    
+    with open(file_name_and_path, 'w') as view_file:
+        inherit_id_string = '<field name="inherit_id" ref="{0}"/>'
         basic_view_file_string = f"""<?xml version="1.0" encoding="utf-8"?>
         
 <odoo>
@@ -44,6 +45,7 @@ def handle_generate_view(view_name: str, model: str, inherit_id: str):
         <record id="{view_name}" model="ir.ui.view">
             <field name="name">{view_name.replace('_', '.')}</field>
             <field name="model">{model.replace('_', '.') if model is not None else ''}</field>
+            {inherit_id_string.format(inherit_id) if inherit_id else ''}
             <field name="arch" type="xml">
 
             </field>

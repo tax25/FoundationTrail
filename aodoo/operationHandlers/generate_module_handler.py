@@ -1,3 +1,4 @@
+import re
 import os
 import sys
 
@@ -8,7 +9,7 @@ from . import wizards
 MANIFEST_FILE_CONTENTS = """{{
 	'name': '{module_name}',
 	'version': '0.1',
-	'depends': ['base'],
+	'depends': {deps},
 	'author': '{author}',
 	'application': {is_application},
 	'data': ['security/ir.model.access.csv'],
@@ -23,13 +24,13 @@ _logger = logging.getLogger(__name__)
 
 SECURITY_FILE_CONTENTS = 'id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink\n'
 
-def handle_generate_module(name, is_application):
+def handle_generate_module(name: str, is_application: bool, dependencies: str):
 
 	assert name != False, "Did not pass the module name!"
-
-	assert os.path.isdir(module_name) == False, "Module with same name already exists!"
 	
 	module_name = re.sub(r'(?<!^)(?=[A-Z])', '_', name.replace(' ', '_')).lower()
+	
+	assert os.path.isdir(module_name) == False, "Module with same name already exists!"
 	
 	print(f"Generating new {'application' if is_application else 'module'}: {module_name}")
 
@@ -50,9 +51,11 @@ def handle_generate_module(name, is_application):
 
 	with open(module_path + '/__manifest__.py', 'w') as manifest_file:
 		manifest_file.write(MANIFEST_FILE_CONTENTS.format(
-			module_name=module_name.replace('_', ' ').title(), 
-			author=os.getlogin(), 
-			is_application=is_application)
+				module_name=module_name.replace('_', ' ').title(), 
+				deps=dependencies.split(',') if dependencies else ['base'],
+				author=os.getlogin(), 
+				is_application=is_application,
+			)
 		)
 
 	with open(module_path + '/models/__init__.py', 'w') as models_init:
