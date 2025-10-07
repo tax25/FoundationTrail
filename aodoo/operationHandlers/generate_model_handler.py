@@ -30,7 +30,7 @@ def handle_generate_model(name: str, type: str, is_wizard: bool, cli_perms: str)
     assert name != False and name != None, "Did not pass the model name!"
 
     model_name = re.sub(r'(?<!^)(?=[A-Z])', '_', name.replace(' ', '_')).lower()
-    model_type = re.sub('^(M|m)odels?.?', '', type).capitalize() if type else 'Model'
+    model_type = re.sub('^(M|m)odels?.?', '', type).capitalize() if type else 'Model' if not is_wizard else 'TransientModel'
     
     model_created = False
     model_added_to_init = False
