@@ -11,9 +11,9 @@ from aodoo.operationHandlers import generate_view_handler as view_helper
 from aodoo.operationHandlers.send_help import send_help
 
 
-# @TODO(At module/application generation maybe generate an __init__.py file in wizards/?)
-# @TODO(Allow the user to create security groups)
-# @TODO(Handle multiple languages [how?])
+# TODO: At module/application generation maybe generate an __init__.py file in wizards/?)
+# TODO: Allow the user to create security groups)
+# TODO: Handle multiple languages [how?])
 
 
 def main(cli_params: list):
@@ -57,7 +57,10 @@ def aodoo_entrypoint():
         description='A tool for odoo developing',
         epilog='Stay the reading of our swan song and epilogue' # see what i did there?
     )
-
+    
+    # NOTE: This needs to be handled in a better way. 
+    # It is quite hard to remember how to create something.
+    # Maybe it should be a bit more word-y?
     parser.add_argument('-V', '--version', action='store_true')
     parser.add_argument('-g', '--generate', type=str)
     parser.add_argument('-mt', '--model-type', type=str)
@@ -75,7 +78,7 @@ def aodoo_entrypoint():
         print("Your installed Aodoo version is: ", __version__)
         sys.exit()
 
-    print(cli_args)
+    # print(cli_args)
     
     main(cli_args)
     

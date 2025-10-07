@@ -10,6 +10,8 @@ DEFAULT_PERMS = {
     'perm_unlink': 0
 }
 
+# TODO: It would be nice to be able to specify even the `_inherit` of a model.
+# WARNING: A model can have a `_name` and still a valid `_inherit`. 
 MODEL_FILE_CONTENTS = """from odoo import api, fields, models
 
 import logging
@@ -21,8 +23,8 @@ class {model_class}(models.{model_type}):
 
 SECURITY_FILE_CONTENTS = "\naccess_{model_name},access_{model_name},model_{model_name},,{perm_read},{perm_write},{perm_create},{perm_unlink}\n"
 
-# @todo(Allow the user to specify the type of model they want to create [Model, TransientModel...])
-# @todo(If an exception is detected, then delete all the files that were created [and, if possible, also delete modifications to existing files *]) 
+# WARNING: This is important
+# TODO: If an exception is detected, then delete all the files that were created [and, if possible, also delete modifications to existing files *] 
 # * => so that means that we write to file only at the very end of the function.
 
 def handle_generate_model(name: str, type: str, is_wizard: bool, cli_perms: str):
@@ -83,7 +85,7 @@ def handle_generate_model(name: str, type: str, is_wizard: bool, cli_perms: str)
     if security_file_path:
         with open(security_file_path, 'a') as sec_file:
             sec_file.write(SECURITY_FILE_CONTENTS.format(model_name=model_name, **perms))
-            print(f"Model added to {security_file_path} with perms = {perms}") # @todo(allow the user to handle the group too)
+            print(f"Model added to {security_file_path} with perms = {perms}") # TODO: allow the user to handle the group too
     
 
             

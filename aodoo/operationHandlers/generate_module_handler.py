@@ -62,12 +62,7 @@ def handle_generate_module(name: str, is_application: bool, dependencies: str):
 		models_init.write(f"from . import {module_name.replace(' ', '_')}\n")
 
 	with open(module_path + f"/models/{module_name.replace(' ', '_')}.py", 'w') as models_base_file:
-		models_base_file.write(f"""from odoo import api, fields, models
-
-import logging
-_logger = logging.getLogger(__name__)
-"""
-		)
+		models_base_file.write(BASE_MODEL_FILE_CONTENTS)
 
 	print("[4] Creating ir.model.access.csv file in security/ folder")
 
