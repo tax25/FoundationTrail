@@ -61,19 +61,20 @@ def handle_generate_model(name: str, type: str, is_wizard: bool, cli_perms: str)
         print(f"Model created in {file_name_and_path}")
         
     # add file to __init__
-    init_file_path = None
-    if f"{'models' if not is_wizard else 'wizards'}" in os.getcwd() and os.path.isfile(INIT_FILENAME):
+    init_file_path = ''
+    if f"{'models' if not is_wizard else 'wizards'}" in os.getcwd():
         init_file_path = INIT_FILENAME
-    elif os.path.isfile(os.getcwd() + f"/{'models' if not is_wizard else 'wizards'}/{INIT_FILENAME}"):
+    else:
         init_file_path = f"{'models' if not is_wizard else 'wizards'}/{INIT_FILENAME}"
 
-    if init_file_path:
+    if os.path.isfile(init_file_path):
         with open(init_file_path, 'a') as init_file:
             init_file.write(f'from . import {model_name}\n')
-            print(f"Model added to {init_file_path} with 'from . import {model_name}'")
     else:
-        print(f"{INIT_FILENAME} not found, model file created but not added to init file")
+        with open(init_file_path, 'w') as init_file:
+            init_file.write(f'from . import {model_name}\n')
 
+    print(f"Model added to {init_file_path} with 'from . import {model_name}'.")
 
     # add model to ir.model.access.csv in security folder
     security_file_path = None

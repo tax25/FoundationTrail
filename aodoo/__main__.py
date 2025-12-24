@@ -11,15 +11,15 @@ from aodoo.operationHandlers import generate_view_handler as view_helper
 from aodoo.operationHandlers.send_help import send_help
 
 
-# TODO: At module/application generation maybe generate an __init__.py file in wizards/?)
-# TODO: Allow the user to create security groups)
-# TODO: Handle multiple languages [how?])
+# TODO: At module/application generation maybe generate an __init__.py file in wizards?
+# TODO: Allow the user to create security groups
+# TODO: Allow i18n initialization
 
 
 def main(cli_params: list):
     if cli_params.generate:
         if not cli_params.name:
-            print("Name Not Valued!")
+            raise Exception('Name not valued!')
         
         name = re.sub(r'(?<!^)(?=[A-Z])', '_', cli_params.name.replace(' ', '_')).lower()
 
@@ -55,7 +55,7 @@ def aodoo_entrypoint():
     parser = argparse.ArgumentParser(
         prog='Aodoo',
         description='A tool for odoo developing',
-        epilog='Stay the reading of our swan song and epilogue' # see what i did there?
+        epilog='Stay the reading of our swan song and epilogue' # see what i did here?
     )
     
     # NOTE: This needs to be handled in a better way. 
