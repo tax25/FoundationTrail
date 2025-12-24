@@ -4,6 +4,7 @@ import re
 INIT_FILENAME = '__init__.py'
 SECURITY_FILENAME = 'ir.model.access.csv'
 DEFAULT_PERMS = {
+    'group_id': '',
     'perm_read': 0, 
     'perm_write': 0, 
     'perm_create': 0, 
@@ -21,11 +22,19 @@ class {model_class}(models.{model_type}):
     _name = '{model_name}'
 """
 
-SECURITY_FILE_CONTENTS = "\naccess_{model_name},access_{model_name},model_{model_name},,{perm_read},{perm_write},{perm_create},{perm_unlink}\n"
+SECURITY_FILE_CONTENTS = "\naccess_{model_name},access_{model_name},model_{model_name},{group_id},{perm_read},{perm_write},{perm_create},{perm_unlink}\n"
 
 # WARNING: This is important
 # TODO: If an exception is detected, then delete all the files that were created [and, if possible, also delete modifications to existing files *] 
 # * => so that means that we write to file only at the very end of the function.
+
+def _check_if_int(value: str) -> bool:
+    try:
+        int(value)
+    except ValueError:
+        return False
+    else:
+        return True
 
 def handle_generate_model(name: str, type: str, is_wizard: bool, cli_perms: str):
     
@@ -40,12 +49,26 @@ def handle_generate_model(name: str, type: str, is_wizard: bool, cli_perms: str)
     perms = None
     if cli_perms:
         cli_perms = cli_perms.split(',')
-        perms = {
-            'perm_read': cli_perms[0],
-            'perm_write': cli_perms[1],
-            'perm_create': cli_perms[2],
-            'perm_unlink': cli_perms[3],
-        }
+        # NOTE: if `cli_perms[0]` is an integer, then it's not 
+        # a valid value for the group_id field, so the first value
+        # is `perm_read`, and the `group_id` is simply left empty.
+        if _check_if_int(cli_perms[0]):
+            perms = {
+                'group_id': '',
+                'perm_read': cli_perms[0],
+                'perm_write': cli_perms[1],
+                'perm_create': cli_perms[2],
+                'perm_unlink': cli_perms[3],
+            }
+        else:
+            perms = {
+                'group_id': cli_perms[0],
+                'perm_read': cli_perms[1],
+                'perm_write': cli_perms[2],
+                'perm_create': cli_perms[3],
+                'perm_unlink': cli_perms[4],
+            }
+
     
     file_name_and_path = ''
     if 'models' in os.getcwd():

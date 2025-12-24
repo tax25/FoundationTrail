@@ -65,7 +65,7 @@ def aodoo_entrypoint():
     parser.add_argument('-g', '--generate', type=str)
     parser.add_argument('-mt', '--model-type', type=str)
     parser.add_argument('-wz', '--wizard', action='store_true')
-    parser.add_argument('-ps', '--perms', type=str, help='Specify perm_read,perm_write,perm_create,perm_unlink all with 0 or 1, separated by commas and no spaces.')
+    parser.add_argument('-ps', '--perms', type=str, help='Specify group_id,perm_read,perm_write,perm_create,perm_unlink all with 0 or 1, separated by commas and no spaces.')
     parser.add_argument('-a', '--app', action='store_true')
     parser.add_argument('-n', '--name', type=str) # NOTE: here the name of the module/model/view gets passed
     parser.add_argument('-d', '--deps', type=str, help='Specify all the dependencies as comma-separated-values. No spaces!')
