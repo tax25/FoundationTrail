@@ -36,11 +36,13 @@ def _check_if_int(value: str) -> bool:
     else:
         return True
 
+
 def handle_generate_model(
     name: str,
     type: str,
     is_wizard: bool,
     inherit: str,
+    file_name: str,
     cli_perms: str
 ):
     
@@ -85,12 +87,12 @@ def handle_generate_model(
     
     file_name_and_path = ''
     if 'models' in os.getcwd():
-        file_name_and_path = os.getcwd() + f'/{model_name}.py'
+        file_name_and_path = os.getcwd() + f'/{file_name.replace('.py','') if file_name else model_name}.py'
     elif os.path.exists(os.getcwd() + f"/{'models' if not is_wizard else 'wizards'}"):
-        file_name_and_path = os.getcwd() + f"/{'models' if not is_wizard else 'wizards'}/{model_name}.py"
+        file_name_and_path = os.getcwd() + f"/{'models' if not is_wizard else 'wizards'}/{file_name.replace('.py','') if file_name else model_name}.py"
     else:
         print(f"Cannot find /models directory so creating the file in current directory ({os.getcwd()})")
-        file_name_and_path = os.getcwd() + f"/{'models' if not is_wizard else 'wizards'}/{model_name}.py"
+        file_name_and_path = os.getcwd() + f"/{'models' if not is_wizard else 'wizards'}/{file_name.replace('.py','') if file_name else model_name}.py"
 
     with open(file_name_and_path, 'w') as model_file:
         model_file.write(MODEL_FILE_CONTENTS.format(model_class=model_name.replace('_', ' ').title().replace(' ', ''), model_name=model_name.replace('_', '.'), model_type=model_type))
@@ -103,14 +105,15 @@ def handle_generate_model(
     else:
         init_file_path = f"{'models' if not is_wizard else 'wizards'}/{INIT_FILENAME}"
 
+    # TODO: rewrite
     if os.path.isfile(init_file_path):
         with open(init_file_path, 'a') as init_file:
-            init_file.write(f'from . import {model_name}\n')
+            init_file.write(f'from . import {file_name.replace('.py','') if file_name else model_name}\n')
     else:
         with open(init_file_path, 'w') as init_file:
-            init_file.write(f'from . import {model_name}\n')
+            init_file.write(f'from . import {file_name.replace('.py','') if file_name else model_name}\n')
 
-    print(f"Model added to {init_file_path} with 'from . import {model_name}'.")
+    print(f"Model added to {init_file_path} with 'from . import {file_name.replace('.py','') if file_name else model_name}'.")
 
     # add model to ir.model.access.csv in security folder
     security_file_path = None

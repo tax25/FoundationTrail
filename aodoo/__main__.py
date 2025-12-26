@@ -28,6 +28,7 @@ def handle_generate(cli_params: list) -> None:
             type=cli_params.model_type,
             is_wizard=cli_params.wizard,
             inherit=cli_params.inherit,
+            file_name=cli_params.file_name,
             cli_perms=cli_params.m_perms,
         )
 
