@@ -120,7 +120,7 @@ def aodoo_entrypoint():
     parser.add_argument('-a', '--app', action='store_true')
     parser.add_argument('-d', '--deps', type=str)
     parser.add_argument('-A', '--author', type=str)
-    parser.add_argument('-v', '--m-version', type=str)
+    parser.add_argument('-mv', '--m-version', type=str)
     parser.add_argument('-D', '--description', type=str)
     parser.add_argument('-c', '--category', type=str)
 

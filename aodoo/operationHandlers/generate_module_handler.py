@@ -8,10 +8,12 @@ from . import wizards
 
 MANIFEST_FILE_CONTENTS = """{{
 	'name': '{module_name}',
-	'version': '0.1',
+	'version': '{version}',
 	'depends': {deps},
 	'author': '{author}',
 	'application': {is_application},
+	'description': '{description}',
+	'category': '{category}',
 	'data': ['security/ir.model.access.csv'],
 }}
 """
@@ -32,9 +34,9 @@ def handle_generate_module(
 	version: str,
 	description: str,
 	category: str
-):
+) -> None:
 
-	assert name != False, "Did not pass the module name!"
+	assert name, "Did not pass the module name!"
 	
 	module_name = re.sub(r'(?<!^)(?=[A-Z])', '_', name.replace(' ', '_')).lower()
 	
@@ -59,10 +61,13 @@ def handle_generate_module(
 
 	with open(module_path + '/__manifest__.py', 'w') as manifest_file:
 		manifest_file.write(MANIFEST_FILE_CONTENTS.format(
-				module_name=module_name.replace('_', ' ').title(), 
+				module_name=module_name.replace('_', ' ').title(),
+				version=version if version else '0.1',
 				deps=dependencies.split(',') if dependencies else ['base'],
-				author=os.getlogin(), 
+				author=author if author else os.getlogin(), 
 				is_application=is_application,
+				description=description if description else '',
+				category=category if category else ''
 			)
 		)
 
