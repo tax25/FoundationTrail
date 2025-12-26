@@ -52,7 +52,14 @@ def handle_generate_model(
     model_created = False
     model_added_to_init = False
     model_added_to_security = False
-    perms = None
+    perms = {
+        'group_id': '',
+        'perm_read': '',
+        'perm_write': '',
+        'perm_create': '',
+        'perm_unlink': '',
+    }
+    
     if cli_perms:
         cli_perms = cli_perms.split(',')
         # NOTE: if `cli_perms[0]` is an integer, then it's not 

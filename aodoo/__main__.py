@@ -128,6 +128,7 @@ def aodoo_entrypoint():
     parser.add_argument('-mt', '--model-type', type=str)
     parser.add_argument('-i', '--inherit', type=str)
     parser.add_argument('-wz', '--wizard', action='store_true')
+    parser.add_argument('-mp', '--m-perms', type=str)
 
     parser.add_argument('-v', '--view', action='store_true')
     parser.add_argument('-vm', '--view-model', type=str)
