@@ -36,7 +36,13 @@ def _check_if_int(value: str) -> bool:
     else:
         return True
 
-def handle_generate_model(name: str, type: str, is_wizard: bool, cli_perms: str):
+def handle_generate_model(
+    name: str,
+    type: str,
+    is_wizard: bool,
+    inherit: str,
+    cli_perms: str
+):
     
     assert name != False and name != None, "Did not pass the model name!"
 

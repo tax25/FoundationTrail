@@ -4,6 +4,10 @@ import platform
 
 def _get_end_directory():
 
+    # WARN: this type of check 
+    # is *not* optimal.
+    # (It could break easily if, for some reason,
+    # the user is not using `/home/*` or `/Users/*`)
     match platform.system():
 
         case 'Darwin':

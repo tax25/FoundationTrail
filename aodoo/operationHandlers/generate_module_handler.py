@@ -24,7 +24,15 @@ _logger = logging.getLogger(__name__)
 
 SECURITY_FILE_CONTENTS = 'id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink\n'
 
-def handle_generate_module(name: str, is_application: bool, dependencies: str):
+def handle_generate_module(
+	name: str,
+	is_application: bool,
+	dependencies: str,
+	author: str,
+	version: str,
+	description: str,
+	category: str
+):
 
 	assert name != False, "Did not pass the module name!"
 	
