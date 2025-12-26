@@ -24,6 +24,7 @@ INHERIT_VIEW_FILE_STRING = ''
 
 def handle_generate_view(view_name: str, model: str, inherit_id: str, is_for_wizard: bool):
     # create file
+    # `file_name` is used in the `__manifest__.py`
     file_name = f"{'views' if not is_for_wizard else 'wizards'}/{view_name}.xml"
     file_name_and_path = ''
     
@@ -31,7 +32,7 @@ def handle_generate_view(view_name: str, model: str, inherit_id: str, is_for_wiz
         file_name_and_path = os.getcwd() + f'/{view_name}.xml'
     elif os.path.exists(os.getcwd() + f"/{'views' if not is_for_wizard else 'wizards'}"):
         file_name_and_path = os.getcwd() + f"/{'views' if not is_for_wizard else 'wizards'}/{view_name}.xml"
-    elif os.path.exists(os.getcwd() + f"../{'views' if not is_for_wizard else 'wizards'}"): # in case the user is in the models directory for example
+    elif os.path.exists(os.getcwd() + f"/../{'views' if not is_for_wizard else 'wizards'}"): # in case the user is in the models directory, for example
         file_name_and_path = os.getcwd() + f'/../{'views' if not is_for_wizard else 'wizards'}/{view_name}.xml'
     else:
         print(f"Cannot find /{'views' if not is_for_wizard else 'wizards'} directory so creating the file in current directory ({os.getcwd()})")

@@ -89,20 +89,6 @@ def aodoo_entrypoint():
         description='A tool for odoo developing',
         epilog='Stay the reading of our swan song and epilogue' # see what i did here?
     )
-    
-    # NOTE: This needs to be handled in a better way. 
-    # It is quite hard to remember how to create something.
-    # Maybe it should be a bit more word-y?
-    # parser.add_argument('-V', '--version', action='store_true')
-    # parser.add_argument('-g', '--generate', type=str)
-    # parser.add_argument('-mt', '--model-type', type=str)
-    # parser.add_argument('-wz', '--wizard', action='store_true')
-    # parser.add_argument('-ps', '--perms', type=str, help='Specify group_id,perm_read,perm_write,perm_create,perm_unlink all with 0 or 1, separated by commas and no spaces.')
-    # parser.add_argument('-a', '--app', action='store_true')
-    # parser.add_argument('-n', '--name', type=str) # NOTE: here the name of the module/model/view gets passed
-    # parser.add_argument('-d', '--deps', type=str, help='Specify all the dependencies as comma-separated-values. No spaces!')
-    # parser.add_argument('-vm', '--view_model', type=str)
-    # parser.add_argument('-inid', '--inherit_id', type=str)
 
     # New Parser
     parser.add_argument('-V', '--version', action='store_true')
