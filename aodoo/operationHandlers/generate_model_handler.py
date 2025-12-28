@@ -126,3 +126,4 @@ def handle_generate_model(
         with open(security_file_path, 'a') as sec_file:
             sec_file.write(SECURITY_FILE_CONTENTS.format(model_name=model_name, **perms))
             print(f"Model added to {security_file_path} with perms = {perms}") # TODO: allow the user to handle the group too
+            

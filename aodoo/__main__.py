@@ -13,7 +13,7 @@ from aodoo.operationHandlers.send_help import send_help
 def handle_generate(cli_params: list) -> None:
     if cli_params.module:
         module_helper.handle_generate_module(
-            cli_params.name,
+            name=cli_params.name,
             is_application=cli_params.app,
             dependencies=cli_params.deps,
             author=cli_params.author,
@@ -24,7 +24,7 @@ def handle_generate(cli_params: list) -> None:
 
     elif cli_params.model:
         model_helper.handle_generate_model(
-            cli_params.name,
+            name=cli_params.name,
             type=cli_params.model_type,
             is_wizard=cli_params.wizard,
             inherit=cli_params.inherit,
@@ -34,14 +34,24 @@ def handle_generate(cli_params: list) -> None:
 
     elif cli_params.view:
         view_helper.handle_generate_view(
-            cli_params.name,
+            name=cli_params.name,
             model=cli_params.view_model,
             inherit_id=cli_params.inherit_view,
             is_for_wizard=cli_params.wizard_view
         )
 
     elif cli_params.security:
-        security_helper.handle_generate_security()
+        security_helper.handle_generate_security(
+            security_file_name=cli_params.file_name,
+            line_id=cli_params.line_id,
+            line_name=cli_params.line_name,
+            model_id=cli_params.model_id,
+            group_id=cli_params.group_id,
+            perm_read=cli_params.perm_read,
+            perm_write=cli_params.perm_write,
+            perm_create=cli_params.perm_create,
+            perm_unlink=cli_params.perm_unlink
+        )
 
     else:
         print("What are you trying to generate?")
@@ -84,6 +94,10 @@ def handle_generate(cli_params: list) -> None:
 
 
 def aodoo_entrypoint():
+    if len(sys.argv) == 1:
+        send_help()
+        sys.exit()
+
     parser = argparse.ArgumentParser(
         prog='Aodoo',
         description='A tool for odoo developing',
@@ -97,7 +111,7 @@ def aodoo_entrypoint():
     # NOTE: this arguments are used in multiple categories, 
     # thus reported before every other flag:
 
-    # NOTE: used in - `-m`, `-v`, 
+    # NOTE: used in - `-m`, `-v`, `-s` 
     parser.add_argument('-fn', '--file-name', type=str)
     # NOTE: used in - `-m`, `-M`, `-v`
     parser.add_argument('-n', '--name', type=str)
@@ -123,7 +137,8 @@ def aodoo_entrypoint():
     parser.add_argument('-iv', '--inherit-view', type=str)
 
     parser.add_argument('-s', '--security', action='store_true')
-    parser.add_argument('-id', type=str)
+    parser.add_argument('-id', '--line-id', type=str)
+    parser.add_argument('-ln', '--line-name', type=str)
     parser.add_argument('-mid', '--model-id', type=str)
     parser.add_argument('-gid', '--group-id', type=str)
     parser.add_argument('-pr', '--perm-read', action='store_true')
@@ -133,7 +148,7 @@ def aodoo_entrypoint():
 
 
     cli_args = parser.parse_args()
-    
+
     if cli_args.version:
         print("Your installed Aodoo version is: ", __version__)
         sys.exit()
