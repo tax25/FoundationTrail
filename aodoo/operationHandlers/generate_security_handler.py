@@ -43,8 +43,6 @@ def handle_generate_security(
 		print(f"Cannot find /security directory so creating the file in the current directory ({os.getcwd()})")
 		file_name = security_file_name if security_file_name else 'ir.model.access.csv'
 
-	print('ok, valori: ', security_file_name, file_name_and_path)
-
 	if os.path.isfile(file_name_and_path):
 		with open(file_name_and_path, 'a') as new_security_file:
 			new_security_file.write(
@@ -52,7 +50,7 @@ def handle_generate_security(
 					line_id=line_id,
 					line_name=line_name,
 					model_id=f"model_{model_id.replace('model_', '')}",
-					group_id=group_id,
+					group_id=group_id if group_id else '',
 					perm_read=int(perm_read),
 					perm_write=int(perm_write),
 					perm_create=int(perm_create),
