@@ -27,9 +27,7 @@ def handle_generate_security(
 	perm_create: bool,
 	perm_unlink: bool,
 ) -> None:
-	print("handle generate security")
-
-	# NOTE: `security_file_name` is used in the `__manifest__.py`.
+	# NOTE: `file_name` is used in the `__manifest__.py`.
 	file_name = f"security/{security_file_name if security_file_name else 'ir.model.access.csv'}"
 	file_name_and_path = ''
 
