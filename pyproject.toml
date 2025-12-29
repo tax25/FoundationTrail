@@ -13,7 +13,7 @@ requires-python = '>=3.11'
 
 
 [project.scripts]
-foundationTrail = 'foundationTrail.__main__:aodoo_entrypoint'
+foundationTrail = 'foundationTrail.__main__:foundationTrail_entrypoint'
 
 [tool.setuptools.dynamic]
 version = { attr = "foundationTrail.__version__"}

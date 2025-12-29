@@ -1,21 +1,19 @@
 # foundationTrail
 
-foundationTrail - an odoo module generator.
+`foundationTrail` an odoo module generator.
 
-The aim of foundationTrail is to automate all those processes (module creation, model creation, view creation, etc...) so that one can fully concentrate on developing the actual model rather than on creating the boilerplate.
+When creating a module for Odoo, the developer faces a few scaffolding actions that are mechanical and repetitive. Though simple, those actions are an easy break point for the developer, who finds him/herself to debug an unneeded problem.
 
-This is a really immature project. Some functionalities are already developed.
+Here comes in `foundationTrail`.
+`foundationTrail` takes care of creating the necessary files, and update the `__manifest__.py` file accordingly.
+
+As of now, using `foundationTrail`, you can:
+
+1. Create a *whole new module*, comprehensive of `__manifest__.py` file, `models/` and `wizards/` directories, and a starting file in `models/`.
+2. Create a *single model*, and it will be automatically added to the `__init__.py` file, in the `modules/` or in the `wizards/` directory.
+3. Create a *view file*, and it will be automatically added to the `__manifest__.py` file.
+4. Create the security file (`ir.model.access.csv`) entirely, and automatically add it to the `__manifest__.py` file.
+5. Add a new line to the security file in the `security/` directory.
 
 
-## *NOTE on 7th October 2025*
-The development of this project has gone a long way since the start.
-Now quite a lot of things can be done with **foundationTrail**.
-Here's a recap:
-
-1. Create a new module from scratch - either an app or a module. Dependencies can be specified right away.
-2. Create a new model inside an existing module, with it being inserted into the `__init__.py` file. With a basic security line in `security/ir.model.access.csv`
-3. Create a new view inside an existing module, with it being inserted into the `__manifest__.py` file.
-4. Create a new wizard, given the right flags, in an existing module.
-
-The thing that I feel is missing from this tool (other than a fair bit of polishing) is the possibility to insert a new record inside an already existing xml file.
-I believe that would be of great help.
+As of now, the operations that `foundationTrail` supports are quite limited. But more development is coming!

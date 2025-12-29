@@ -8,7 +8,7 @@ from foundationTrail.operationHandlers import generate_module_handler as module_
 from foundationTrail.operationHandlers import generate_security_handler as security_helper
 from foundationTrail.operationHandlers import generate_model_handler as model_helper
 from foundationTrail.operationHandlers import generate_view_handler as view_helper
-from foundationTrail.operationHandlers.send_help import send_help
+from foundationTrail.operationHandlers import send_help
 
 HANDLE_GENERATE_ERROR_STRING = """
 HANDLE_GENERATE_ERROR: What are you trying to generate?
@@ -66,16 +66,21 @@ def handle_generate(cli_params: list) -> None:
         print(HANDLE_GENERATE_ERROR_STRING)
 
 
-def aodoo_entrypoint():
+def foundationTrail_entrypoint():
     if len(sys.argv) == 1:
-        send_help()
+        send_help.send_help()
         sys.exit()
 
     parser = argparse.ArgumentParser(
-        prog='Aodoo',
+        prog='FoundationTrail',
         description='A tool for odoo developing',
-        epilog='Stay the reading of our swan song and epilogue' # see what i did here? :D
+        epilog='Stay the reading of our swan song and epilogue', # see what i did here? :D
+        add_help=False
     )
+
+    parser.add_argument('-h', '--help', action='store_true')
+    
+    parser.add_argument('-e', '--explain', type=str)
 
     parser.add_argument('-V', '--version', action='store_true')
     parser.add_argument('-g', '--generate', action='store_true')
@@ -124,9 +129,25 @@ def aodoo_entrypoint():
         print("Your installed Aodoo version is: ", __version__)
         sys.exit()
 
+    if cli_args.help:
+        send_help.send_help()
+        sys.exit()
+
+    if cli_args.explain:
+        if cli_args.explain in ('M', 'module', '-M', '--module'):
+            send_help.explain_module_generation()
+        elif cli_args.explain in ('m', 'model', '-m', '--model'):
+            send_help.explain_model_generation()
+        elif cli_args.explain in ('v', 'view', '-v', '--view'):
+            send_help.explain_view_generation()
+        elif cli_args.explain in ('s', 'security', '-s', '--security'):
+            send_help.explain_security_generation()
+
+        sys.exit()
+
     if cli_args.generate:
         handle_generate(cli_args)
     
 
 if __name__ == '__main__':
-    aodoo_entrypoint()
+    foundationTrail_entrypoint()

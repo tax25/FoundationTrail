@@ -1,23 +1,41 @@
-def send_help() :
+def send_help() -> None:
 
     print("""
-Hi! It looks like you have not passed enough parameters!
+Hey! It looks like you need help!
 
-## WARNING: this is still a WIP (obviously) and needs updates, will update the help function 
-## as i go on with the development
+FoundationTrail usage:
 
-Here are some informations on the generic parameters of Aodoo:
-    1. The first parameter you have to pass is the "action". 
-       Basically "what do you want to do?": generate something? Other? (not that there are other options at the moment, lol).
-       So for now you will just pass "generate" or "g" if you don't want to type too much.
+-> First flag: `-g` (or `--generate`)
+    This does nothing other than tell `foundationTrail` that you want to *generate* something.
+-> Second flag: `-M` (or `--module`), `-m` (or `--model`), `-v` (or `--view`), `-s` (or `--security`) 
+    This flag specifies which *type* of resource you want to generate
 
-    2. The second parameter is the "detail" of the first one. So you want to generate something: what? A security file, a model, an entire module?
-       You can pass the following parameters to the "generate" action:
-
-           * "module" or "m" -> to generate a complete module boilerplate
-           * "view" or "v" -> to generate a single view file (and include it in the __manifest__) for a specific model
-           * "model" or "M" -> to generate a new model file (and add it in the right __init__)
-           * "security" or "s" -> to generate a security file or add the security for a specific model
-
+=> To get more information of the usage of the singular second flags, please use:
+`foundationTrail --explain {secondFlag}` or `foundationTrail -e {secondFlag}`.
+-> Where `secondFlag` is the flag you want clarifications about.
     """)
 
+def explain_module_generation() -> None:
+    print("""
+Looks like you need help with the generation of a module!
+
+So, the available flags are:
+* -n  | --name => allows you to specify the name of the module to be created.
+* -a  | --app => allows you to specify that the module to be created is an application - sets the `app` attribute in the `__manifest__.py` file to `True`.
+* -d  | --deps => allows you to specify one or more dependencies for the module. They have to be specified separated by commas, no spaces!
+* -A  | --author => allows you to specify who is the author of the module. If not set, `foundationTrail` automatically takes your login username.
+* -mv | --m-version => allows you to specify the version of the module.
+* -D  | --description => allows you to specify the description of the module.
+* -c  | --category => allows you to specify the category of the module.
+
+All these flags mainly just change what is written in the `__manifest__.py` file.
+    """)
+
+def explain_model_generation() -> None:
+    print("This part of the application still has to be developed!")
+
+def explain_view_generation() -> None:
+    print("This part of the application still has to be developed!")
+
+def explain_security_generation() -> None:
+    print("This part of the application still has to be developed!")
