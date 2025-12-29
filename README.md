@@ -2,7 +2,7 @@
 
 `foundationTrail` an odoo module generator.
 
-When creating a module for Odoo, the developer faces a few scaffolding actions that are mechanical and repetitive. Though simple, those actions are an easy break point for the developer, who finds him/herself to debug an unneeded problem.
+When creating a module for Odoo, the developer faces a few scaffolding actions that are mechanical and repetitive. Though simple, those actions are an easy break point for the developer, who finds themself to debug an unneeded problem.
 
 Here comes in `foundationTrail`.
 `foundationTrail` takes care of creating the necessary files, and update the `__manifest__.py` file accordingly.
