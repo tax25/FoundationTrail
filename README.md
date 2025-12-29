@@ -1,15 +1,15 @@
-# Aodoo
+# foundationTrail
 
-Aodoo - an odoo module generator.
+foundationTrail - an odoo module generator.
 
-The aim of Aodoo is to automate all those processes (module creation, model creation, view creation, etc...) so that one can fully concentrate on developing the actual model rather than on creating the boilerplate.
+The aim of foundationTrail is to automate all those processes (module creation, model creation, view creation, etc...) so that one can fully concentrate on developing the actual model rather than on creating the boilerplate.
 
 This is a really immature project. Some functionalities are already developed.
 
 
 ## *NOTE on 7th October 2025*
 The development of this project has gone a long way since the start.
-Now quite a lot of things can be done with **aodoo**.
+Now quite a lot of things can be done with **foundationTrail**.
 Here's a recap:
 
 1. Create a new module from scratch - either an app or a module. Dependencies can be specified right away.

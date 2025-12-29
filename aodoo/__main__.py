@@ -2,13 +2,22 @@ import argparse
 import sys
 import re
 
-from aodoo import __version__
+from foundationTrail import __version__
 
-from aodoo.operationHandlers import generate_module_handler as module_helper
-from aodoo.operationHandlers import generate_security_handler as security_helper
-from aodoo.operationHandlers import generate_model_handler as model_helper
-from aodoo.operationHandlers import generate_view_handler as view_helper
-from aodoo.operationHandlers.send_help import send_help
+from foundationTrail.operationHandlers import generate_module_handler as module_helper
+from foundationTrail.operationHandlers import generate_security_handler as security_helper
+from foundationTrail.operationHandlers import generate_model_handler as model_helper
+from foundationTrail.operationHandlers import generate_view_handler as view_helper
+from foundationTrail.operationHandlers.send_help import send_help
+
+HANDLE_GENERATE_ERROR_STRING = """
+HANDLE_GENERATE_ERROR: What are you trying to generate?
+Available options are:
+    1. module (-M, --odule)
+    2. model (-m, --model)
+    3. view (-v, --view)
+    4. security (-s, --security)
+"""
 
 def handle_generate(cli_params: list) -> None:
     if cli_params.module:
@@ -54,43 +63,7 @@ def handle_generate(cli_params: list) -> None:
         )
 
     else:
-        print("What are you trying to generate?")
-
-
-
-# def main(cli_params: list):
-#     if cli_params.generate:
-#         if not cli_params.name:
-#             raise Exception('Name not valued!')
-        
-#         name = re.sub(r'(?<!^)(?=[A-Z])', '_', cli_params.name.replace(' ', '_')).lower()
-
-#         match cli_params.generate:
-#             case 'module' | 'm':
-#                 module_helper.handle_generate_module(
-#                     name,
-#                     is_application=cli_params.app,
-#                     dependencies=cli_params.deps
-#                 )
-
-#             case 'view' | 'v':
-#                 assert cli_params.view_model, 'Model not valued!'
-#                 view_helper.handle_generate_view(
-#                     view_name=name,
-#                     model=cli_params.view_model,
-#                     inherit_id=cli_params.inherit_id,
-#                     is_for_wizard=cli_params.wizard
-#                 )
-
-#             case 'model' | 'M':
-#                 model_helper.handle_generate_model(name.replace('.py', ''), cli_params.model_type, cli_params.wizard, cli_params.perms)
-
-#             case 'security' | 's':
-#                 sec_helper.handle_generate_security(name)
-
-#     else:
-#         send_help()
-        # sys.exit()
+        print(HANDLE_GENERATE_ERROR_STRING)
 
 
 def aodoo_entrypoint():
@@ -101,21 +74,19 @@ def aodoo_entrypoint():
     parser = argparse.ArgumentParser(
         prog='Aodoo',
         description='A tool for odoo developing',
-        epilog='Stay the reading of our swan song and epilogue' # see what i did here?
+        epilog='Stay the reading of our swan song and epilogue' # see what i did here? :D
     )
 
-    # New Parser
     parser.add_argument('-V', '--version', action='store_true')
     parser.add_argument('-g', '--generate', action='store_true')
     
-    # NOTE: this arguments are used in multiple categories, 
+    # NOTE: these arguments are used in multiple categories, 
     # thus reported before every other flag:
 
     # NOTE: used in - `-m`, `-v`, `-s` 
     parser.add_argument('-fn', '--file-name', type=str)
     # NOTE: used in - `-m`, `-M`, `-v`
     parser.add_argument('-n', '--name', type=str)
-
 
     parser.add_argument('-M', '--module', action='store_true')
     parser.add_argument('-a', '--app', action='store_true')
@@ -153,13 +124,9 @@ def aodoo_entrypoint():
         print("Your installed Aodoo version is: ", __version__)
         sys.exit()
 
-    # print(cli_args)
-    
-    # main(cli_args)
-
     if cli_args.generate:
         handle_generate(cli_args)
     
 
-if __name__ == '__main__': # for testing purposes
+if __name__ == '__main__':
     aodoo_entrypoint()

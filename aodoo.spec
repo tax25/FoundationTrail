@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['aodoo.py'],
+    ['foundationTrail.py'],
     pathex=[],
     binaries=[],
     datas=[],
@@ -20,7 +20,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='aodoo',
+    name='foundationTrail',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -39,5 +39,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='aodoo',
+    name='foundationTrail',
 )
