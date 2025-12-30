@@ -126,7 +126,7 @@ def foundationTrail_entrypoint():
     cli_args = parser.parse_args()
 
     if cli_args.version:
-        print("Your installed Aodoo version is: ", __version__)
+        print("Your installed FoundationTrail version is: ", __version__)
         sys.exit()
 
     if cli_args.help:
