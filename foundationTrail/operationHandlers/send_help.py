@@ -1,5 +1,4 @@
 def send_help() -> None:
-
     print("""
 Hey! It looks like you need help!
 
@@ -12,7 +11,7 @@ FoundationTrail usage:
     This flag specifies which *type* of resource you want to generate
 
 => To get more information of the usage of the singular second flags, please use:
-`foundationTrail --explain {secondFlag}` or `foundationTrail -e {secondFlag}`.
+`foundationTrail --explain {secondFlag}` or `foundationTrail -e {secondFlag}` or `foundationTrail -e=-{secondFlag}` or `foundationTrail --explain=-{secondFlag}`.
 -> Where `secondFlag` is the flag you want clarifications about.
     """)
 
