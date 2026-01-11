@@ -51,9 +51,6 @@ def handle_generate_model(
     model_name = re.sub(r'(?<!^)(?=[A-Z])', '_', name.replace(' ', '_')).lower()
     model_type = re.sub('^(M|m)odels.?', '', chosen_type).capitalize() if chosen_type else 'Model' if not is_wizard else 'TransientModel'
    
-    print("valore chosen_type: ", chosen_type)
-    print("valore model_type: ", model_type)
-
     # NOTE: reserved for future use.
     _model_created = False
     _model_added_to_init = False
