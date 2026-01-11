@@ -7,6 +7,7 @@ FoundationTrail usage:
 
 -> First flag: `-g` (or `--generate`)
     This does nothing other than tell `foundationTrail` that you want to *generate* something.
+    
 -> Second flag: `-M` (or `--module`), `-m` (or `--model`), `-v` (or `--view`), `-s` (or `--security`) 
     This flag specifies which *type* of resource you want to generate
 

@@ -19,7 +19,7 @@ Available options are:
     4. security (-s, --security)
 """
 
-def handle_generate(cli_params: list) -> None:
+def handle_generate(cli_params) -> None:
     if cli_params.module:
         module_helper.handle_generate_module(
             name=cli_params.name,
@@ -34,7 +34,7 @@ def handle_generate(cli_params: list) -> None:
     elif cli_params.model:
         model_helper.handle_generate_model(
             name=cli_params.name,
-            type=cli_params.model_type,
+            chosen_type=cli_params.model_type,
             is_wizard=cli_params.wizard,
             inherit=cli_params.inherit,
             file_name=cli_params.file_name,
@@ -43,7 +43,7 @@ def handle_generate(cli_params: list) -> None:
 
     elif cli_params.view:
         view_helper.handle_generate_view(
-            name=cli_params.name,
+            view_name=cli_params.name,
             model=cli_params.view_model,
             inherit_id=cli_params.inherit_view,
             is_for_wizard=cli_params.wizard_view
@@ -121,7 +121,6 @@ def foundationTrail_entrypoint():
     parser.add_argument('-pw', '--perm-write', action='store_true')
     parser.add_argument('-pc', '--perm-create', action='store_true')
     parser.add_argument('-pu', '--perm-unlink', action='store_true')
-
 
     cli_args = parser.parse_args()
 
