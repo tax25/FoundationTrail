@@ -63,7 +63,7 @@ def handle_generate_model(
         'perm_unlink': '',
     }
     
-    assert cli_perms, raise Exception("Perms not valued! Please value the permissions of the model you're about to create!")
+    assert cli_perms, "Perms not valued! Please value the permissions of the model you're about to create!"
 
     splitted_cli_perms = cli_perms.split(',')
     # NOTE: if `splitted_cli_perms[0]` is an integer, then it's not 
@@ -115,13 +115,6 @@ def handle_generate_model(
     else:
         init_file_path = f"{'models' if not is_wizard else 'wizards'}/{INIT_FILENAME}"
 
-    # if os.path.isfile(init_file_path):
-    #     with open(init_file_path, 'a') as init_file:
-    #         init_file.write(f"from . import {file_name.replace('.py','') if file_name else model_name}\n")
-    # else:
-    #     with open(init_file_path, 'w') as init_file:
-            # init_file.write(f"from . import {file_name.replace('.py','') if file_name else model_name}\n")
-    
     with open(init_file_path, 'a' if os.path.isfile(init_file_path) else 'w') as init_file:
         init_file.write(f"from . import {file_name.replace('.py', '') if file_name else model_name}\n")
 

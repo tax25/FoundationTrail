@@ -73,10 +73,11 @@ def foundationTrail_entrypoint():
     parser = argparse.ArgumentParser(
         prog='FoundationTrail',
         description='A tool for odoo developing',
-        epilog='Stay the reading of our swan song and epilogue', # see what i did here? :D
+        epilog='Stay the reading of our swan song and epilogue', # :D
         add_help=False
     )
-
+    
+    # TODO: add an interactive interface to use foundationTrail.
     parser.add_argument('-h', '--help', action='store_true')
     
     parser.add_argument('-e', '--explain', type=str)
