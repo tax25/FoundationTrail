@@ -63,7 +63,7 @@ def handle_generate_module(
 		manifest_file.write(MANIFEST_FILE_CONTENTS.format(
 				module_name=module_name.replace('_', ' ').title(),
 				version=version if version else '0.1',
-				deps=dependencies.split(',') if dependencies else ['base'],
+				deps=dependencies.split(',') if dependencies else [],
 				author=author if author else os.getlogin(), 
 				is_application=is_application,
 				description=description if description else '',

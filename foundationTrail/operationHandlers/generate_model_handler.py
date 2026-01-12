@@ -11,7 +11,6 @@ DEFAULT_PERMS = {
     'perm_unlink': 0
 }
 
-# TODO: It would be nice to be able to specify even the `_inherit` of a model.
 # WARNING: A model can have a `_name` and still a valid `_inherit`. 
 MODEL_FILE_CONTENTS = """from odoo import api, fields, models
 
@@ -64,27 +63,28 @@ def handle_generate_model(
         'perm_unlink': '',
     }
     
-    if cli_perms:
-        splitted_cli_perms = cli_perms.split(',')
-        # NOTE: if `splitted_cli_perms[0]` is an integer, then it's not 
-        # a valid value for the group_id field, so the first value
-        # is `perm_read`, and the `group_id` is simply left empty.
-        if _check_if_int(cli_perms[0]):
-            perms = {
-                'group_id': '',
-                'perm_read': splitted_cli_perms[0],
-                'perm_write': splitted_cli_perms[1],
-                'perm_create': splitted_cli_perms[2],
-                'perm_unlink': splitted_cli_perms[3],
-            }
-        else:
-            perms = {
-                'group_id': splitted_cli_perms[0],
-                'perm_read': splitted_cli_perms[1],
-                'perm_write': splitted_cli_perms[2],
-                'perm_create': splitted_cli_perms[3],
-                'perm_unlink': splitted_cli_perms[4],
-            }
+    assert cli_perms, raise Exception("Perms not valued! Please value the permissions of the model you're about to create!")
+
+    splitted_cli_perms = cli_perms.split(',')
+    # NOTE: if `splitted_cli_perms[0]` is an integer, then it's not 
+    # a valid value for the group_id field, so the first value
+    # is `perm_read`, and the `group_id` is simply left empty.
+    if _check_if_int(cli_perms[0]):
+        perms = {
+            'group_id': '',
+            'perm_read': splitted_cli_perms[0],
+            'perm_write': splitted_cli_perms[1],
+            'perm_create': splitted_cli_perms[2],
+            'perm_unlink': splitted_cli_perms[3],
+        }
+    else:
+        perms = {
+            'group_id': splitted_cli_perms[0],
+            'perm_read': splitted_cli_perms[1],
+            'perm_write': splitted_cli_perms[2],
+            'perm_create': splitted_cli_perms[3],
+            'perm_unlink': splitted_cli_perms[4],
+        }
 
     
     file_name_and_path = ''
@@ -115,13 +115,15 @@ def handle_generate_model(
     else:
         init_file_path = f"{'models' if not is_wizard else 'wizards'}/{INIT_FILENAME}"
 
-    # TODO: rewrite
-    if os.path.isfile(init_file_path):
-        with open(init_file_path, 'a') as init_file:
-            init_file.write(f"from . import {file_name.replace('.py','') if file_name else model_name}\n")
-    else:
-        with open(init_file_path, 'w') as init_file:
-            init_file.write(f"from . import {file_name.replace('.py','') if file_name else model_name}\n")
+    # if os.path.isfile(init_file_path):
+    #     with open(init_file_path, 'a') as init_file:
+    #         init_file.write(f"from . import {file_name.replace('.py','') if file_name else model_name}\n")
+    # else:
+    #     with open(init_file_path, 'w') as init_file:
+            # init_file.write(f"from . import {file_name.replace('.py','') if file_name else model_name}\n")
+    
+    with open(init_file_path, 'a' if os.path.isfile(init_file_path) else 'w') as init_file:
+        init_file.write(f"from . import {file_name.replace('.py', '') if file_name else model_name}\n")
 
     print(f"Model added to {init_file_path} with 'from . import {file_name.replace('.py','') if file_name else model_name}'.")
 

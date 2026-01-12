@@ -1,6 +1,5 @@
 import argparse
 import sys
-import re
 
 from foundationTrail import __version__
 
