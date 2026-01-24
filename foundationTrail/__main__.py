@@ -7,6 +7,7 @@ from foundationTrail.operationHandlers import generate_module_handler as module_
 from foundationTrail.operationHandlers import generate_security_handler as security_helper
 from foundationTrail.operationHandlers import generate_model_handler as model_helper
 from foundationTrail.operationHandlers import generate_view_handler as view_helper
+from foundationTrail.operationHandlers import generate_interactive_handler as interactive_helper
 from foundationTrail.operationHandlers import send_help
 
 HANDLE_GENERATE_ERROR_STRING = """
@@ -61,6 +62,24 @@ def handle_generate(cli_params) -> None:
             perm_unlink=cli_params.perm_unlink
         )
 
+    else:
+        print(HANDLE_GENERATE_ERROR_STRING)
+
+
+def interactive_handle_generate(
+        generate_module: bool, 
+        generate_model: bool, 
+        generate_view: bool, 
+        generate_security: bool
+    ):
+    if generate_module:
+        interactive_helper.handle_generate_interactive([])
+    elif generate_model:
+        interactive_helper.handle_generate_interactive([])
+    elif generate_view:
+        interactive_helper.handle_generate_interactive([])
+    elif generate_security:
+        interactive_helper.handle_generate_interactive([])
     else:
         print(HANDLE_GENERATE_ERROR_STRING)
 

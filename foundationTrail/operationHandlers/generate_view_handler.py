@@ -22,6 +22,37 @@ END_DIRECTORY = _get_end_directory()
 BASIC_VIEW_FILE_STRING = ''
 INHERIT_VIEW_FILE_STRING = ''
 
+GENERATE_VIEW_PARAMETERS = [
+    {
+        'property_name': 'view_name',
+        'property_type': str,
+        'property_is_optional': False,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Please specify the name for the view to be generated'
+    },
+    {
+        'property_name': 'model',
+        'property_type': str,
+        'property_is_optional': False,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Please specify the model that the view to be created will refer to'
+    },
+    {
+        'property_name': 'inherit_id',
+        'property_type': str,
+        'property_is_optional': True,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Please specify the view this view will be inheriting from'
+    },
+    {
+        'property_name': 'is_for_wizard',
+        'property_type': bool,
+        'property_is_optional': False,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Is this view for a wizard?'
+    },
+]
+
 def handle_generate_view(view_name: str, model: str, inherit_id: str, is_for_wizard: bool):
     # create file
     # `file_name` is used in the `__manifest__.py`
@@ -33,7 +64,7 @@ def handle_generate_view(view_name: str, model: str, inherit_id: str, is_for_wiz
     elif os.path.exists(os.getcwd() + f"/{'views' if not is_for_wizard else 'wizards'}"):
         file_name_and_path = os.getcwd() + f"/{'views' if not is_for_wizard else 'wizards'}/{view_name}.xml"
     elif os.path.exists(os.getcwd() + f"/../{'views' if not is_for_wizard else 'wizards'}"): # in case the user is in the models directory, for example
-        file_name_and_path = os.getcwd() + f'/../{'views' if not is_for_wizard else 'wizards'}/{view_name}.xml'
+        file_name_and_path = os.getcwd() + f"/../{'views' if not is_for_wizard else 'wizards'}/{view_name}.xml"
     else:
         print(f"Cannot find /{'views' if not is_for_wizard else 'wizards'} directory so creating the file in current directory ({os.getcwd()})")
         file_name = f'{view_name}.xml'

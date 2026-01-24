@@ -29,6 +29,7 @@ SECURITY_FILE_CONTENTS = 'id,name,model_id:id,group_id:id,perm_read,perm_write,p
 GENERATE_MODULE_PARAMETERS = [
     {
         'property_name': 'name',
+        # 'property_label': 'Module Name',
         'property_type': str,
         'property_is_optional': False,
         'property_allowed_vals': None,
@@ -36,6 +37,7 @@ GENERATE_MODULE_PARAMETERS = [
     },
     {
         'property_name': 'is_application',
+        # 'property_label': '',
         'property_type': bool,
         'property_is_optional': False,
         'property_allowed_vals': None,
