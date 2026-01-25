@@ -63,7 +63,7 @@ GENERATE_MODEL_PARAMETERS = [
         'property_type': str,
         'property_is_optional': True,
         'property_allowed_vals': None,
-        'property_ask_for_val_msg': ''
+        'property_ask_for_val_msg': 'Please specify the model this new model has to inherit from'
     },
     {
         'property_name': 'file_name',
