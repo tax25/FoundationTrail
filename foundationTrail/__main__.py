@@ -73,13 +73,13 @@ def interactive_handle_generate(
         generate_security: bool
     ):
     if generate_module:
-        interactive_helper.handle_generate_interactive([])
+        interactive_helper.handle_generate_interactive(module_helper.GENERATE_MODULE_PARAMETERS)
     elif generate_model:
-        interactive_helper.handle_generate_interactive([])
+        interactive_helper.handle_generate_interactive(model_helper.GENERATE_MODEL_PARAMETERS)
     elif generate_view:
-        interactive_helper.handle_generate_interactive([])
+        interactive_helper.handle_generate_interactive(view_helper.GENERATE_VIEW_PARAMETERS)
     elif generate_security:
-        interactive_helper.handle_generate_interactive([])
+        interactive_helper.handle_generate_interactive(security_helper.GENERATE_SECURITY_PARAMETERS)
     else:
         print(HANDLE_GENERATE_ERROR_STRING)
 
@@ -96,8 +96,12 @@ def foundationTrail_entrypoint():
         add_help=False
     )
     
-    # TODO: add an interactive interface to use foundationTrail.
     parser.add_argument('-h', '--help', action='store_true')
+    
+    # NOTE: this flag triggers the interactive mode.
+    # That means that the user will be asked for each parameter individually,
+    # instead of being forced to pass them all at once in one single command line.
+    parser.add_argument('-I', '--interactive', action='store_true')
     
     parser.add_argument('-e', '--explain', type=str)
 
@@ -164,8 +168,17 @@ def foundationTrail_entrypoint():
         sys.exit()
 
     if cli_args.generate:
+        if cli_args.interactive:
+            interactive_handle_generate(
+                cli_args.module,
+                cli_args.model,
+                cli_args.view,
+                cli_args.security
+            )
+            sys.exit()
+
         handle_generate(cli_args)
-    
+
 
 if __name__ == '__main__':
     foundationTrail_entrypoint()
