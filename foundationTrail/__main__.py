@@ -75,7 +75,9 @@ def interactive_handle_generate(
     if generate_module:
         interactive_helper.handle_generate_interactive(module_helper.GENERATE_MODULE_PARAMETERS)
     elif generate_model:
-        interactive_helper.handle_generate_interactive(model_helper.GENERATE_MODEL_PARAMETERS)
+        model_helper.handle_generate_model(
+            **interactive_helper.handle_generate_interactive(model_helper.GENERATE_MODEL_PARAMETERS)
+        )
     elif generate_view:
         interactive_helper.handle_generate_interactive(view_helper.GENERATE_VIEW_PARAMETERS)
     elif generate_security:

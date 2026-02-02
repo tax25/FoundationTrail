@@ -33,8 +33,8 @@ def handle_generate_interactive(params_to_handle: list[dict]) -> dict:
     for param in params_to_handle:
         fallback_string = f"Please insert value for '{param.get('property_label', '')}':"
         ask_for_val_msg = param.get('property_ask_for_val_msg', fallback_string)
-        # final_msg = f"{ask_for_val_msg}{' [Optional]' if param['property_is_optional'] else ''}{' [y/N]' if param['property_type'] is bool else ''}:"
-        final_msg = '{}{}{}'.format(
+
+        final_msg = '{}{}{}:'.format(
             ask_for_val_msg,
             ' [Optional]' if param['property_is_optional'] else '',
             ' [y/N]' if param['property_type'] is bool else ''

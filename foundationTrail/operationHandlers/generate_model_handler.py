@@ -94,6 +94,8 @@ def handle_generate_model(
     assert name and name is not None, "Did not pass the model name!"
 
     model_name = re.sub(r'(?<!^)(?=[A-Z])', '_', name.replace(' ', '_')).lower()
+    adapted_inherit = re.sub(r'(?<!^)(?=[A-Z])', '_', inherit.replace(' ', '_')).lower() if inherit else ''
+
     model_type = re.sub('^(M|m)odels.?', '', chosen_type).capitalize() if chosen_type else 'Model' if not is_wizard else 'TransientModel'
    
     # NOTE: reserved for future use.
@@ -149,7 +151,7 @@ def handle_generate_model(
                 model_type=model_type,
                 # NOTE: a model can both have `_name` and `_inherit`. How to handle this situation?
                 name_or_inherit='_name' if not inherit else '_inherit',
-                model_name_or_inherit=f"'{model_name.replace('_', '.')}'",
+                model_name_or_inherit=f"'{(adapted_inherit if inherit else model_name).replace('_', '.')}'",
             )
         )
         print(f"Model created in {file_name_and_path}")
