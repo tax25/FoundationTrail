@@ -73,15 +73,25 @@ def interactive_handle_generate(
         generate_security: bool
     ):
     if generate_module:
-        interactive_helper.handle_generate_interactive(module_helper.GENERATE_MODULE_PARAMETERS)
+        module_helper.handle_generate_module(
+            **interactive_helper.handle_generate_interactive(module_helper.GENERATE_MODULE_PARAMETERS)
+        )
+
     elif generate_model:
         model_helper.handle_generate_model(
             **interactive_helper.handle_generate_interactive(model_helper.GENERATE_MODEL_PARAMETERS)
         )
+
     elif generate_view:
-        interactive_helper.handle_generate_interactive(view_helper.GENERATE_VIEW_PARAMETERS)
+        view_helper.handle_generate_view(
+            **interactive_helper.handle_generate_interactive(view_helper.GENERATE_VIEW_PARAMETERS)
+        )
+        
     elif generate_security:
-        interactive_helper.handle_generate_interactive(security_helper.GENERATE_SECURITY_PARAMETERS)
+        security_helper.handle_generate_security(
+            **interactive_helper.handle_generate_interactive(security_helper.GENERATE_SECURITY_PARAMETERS)
+        )
+        
     else:
         print(HANDLE_GENERATE_ERROR_STRING)
 
