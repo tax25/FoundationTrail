@@ -7,6 +7,7 @@ from foundationTrail.operationHandlers import generate_module_handler as module_
 from foundationTrail.operationHandlers import generate_security_handler as security_helper
 from foundationTrail.operationHandlers import generate_model_handler as model_helper
 from foundationTrail.operationHandlers import generate_view_handler as view_helper
+from foundationTrail.operationHandlers import generate_interactive_handler as interactive_helper
 from foundationTrail.operationHandlers import send_help
 
 HANDLE_GENERATE_ERROR_STRING = """
@@ -65,6 +66,26 @@ def handle_generate(cli_params) -> None:
         print(HANDLE_GENERATE_ERROR_STRING)
 
 
+def interactive_handle_generate(
+        generate_module: bool, 
+        generate_model: bool, 
+        generate_view: bool, 
+        generate_security: bool
+    ):
+    if generate_module:
+        interactive_helper.handle_generate_interactive(module_helper.GENERATE_MODULE_PARAMETERS)
+    elif generate_model:
+        model_helper.handle_generate_model(
+            **interactive_helper.handle_generate_interactive(model_helper.GENERATE_MODEL_PARAMETERS)
+        )
+    elif generate_view:
+        interactive_helper.handle_generate_interactive(view_helper.GENERATE_VIEW_PARAMETERS)
+    elif generate_security:
+        interactive_helper.handle_generate_interactive(security_helper.GENERATE_SECURITY_PARAMETERS)
+    else:
+        print(HANDLE_GENERATE_ERROR_STRING)
+
+
 def foundationTrail_entrypoint():
     if len(sys.argv) == 1:
         send_help.send_help()
@@ -73,11 +94,16 @@ def foundationTrail_entrypoint():
     parser = argparse.ArgumentParser(
         prog='FoundationTrail',
         description='A tool for odoo developing',
-        epilog='Stay the reading of our swan song and epilogue', # see what i did here? :D
+        epilog='Stay the reading of our swan song and epilogue', # :D
         add_help=False
     )
-
+    
     parser.add_argument('-h', '--help', action='store_true')
+    
+    # NOTE: this flag triggers the interactive mode.
+    # That means that the user will be asked for each parameter individually,
+    # instead of being forced to pass them all at once in one single command line.
+    parser.add_argument('-I', '--interactive', action='store_true')
     
     parser.add_argument('-e', '--explain', type=str)
 
@@ -144,8 +170,17 @@ def foundationTrail_entrypoint():
         sys.exit()
 
     if cli_args.generate:
+        if cli_args.interactive:
+            interactive_handle_generate(
+                cli_args.module,
+                cli_args.model,
+                cli_args.view,
+                cli_args.security
+            )
+            sys.exit()
+
         handle_generate(cli_args)
-    
+
 
 if __name__ == '__main__':
     foundationTrail_entrypoint()

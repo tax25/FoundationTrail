@@ -36,6 +36,52 @@ def _check_if_int(value: str) -> bool:
         return True
 
 
+GENERATE_MODEL_PARAMETERS = [
+    {
+        'property_name': 'name',
+        'property_type': str,
+        'property_is_optional': False,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Please specify model name'
+    },
+    {
+        'property_name': 'chosen_type',
+        'property_type': str,
+        'property_is_optional': False,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Please specify model type'
+    },
+    {
+        'property_name': 'is_wizard',
+        'property_type': bool,
+        'property_is_optional': False,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Is this model for a wizard?'
+    },
+    {
+        'property_name': 'inherit',
+        'property_type': str,
+        'property_is_optional': True,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Please specify the model this new model has to inherit from'
+    },
+    {
+        'property_name': 'file_name',
+        'property_type': str,
+        'property_is_optional': True,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': "Please specify the file name in which you'd like the module to be created"
+    },
+    {
+        'property_name': 'cli_perms',
+        'property_type': str,
+        'property_is_optional': True,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Please specify the permissions for the model to be created'
+    },
+
+]
+
 def handle_generate_model(
     name: str,
     chosen_type: str,
@@ -48,6 +94,8 @@ def handle_generate_model(
     assert name and name is not None, "Did not pass the model name!"
 
     model_name = re.sub(r'(?<!^)(?=[A-Z])', '_', name.replace(' ', '_')).lower()
+    adapted_inherit = re.sub(r'(?<!^)(?=[A-Z])', '_', inherit.replace(' ', '_')).lower() if inherit else ''
+
     model_type = re.sub('^(M|m)odels.?', '', chosen_type).capitalize() if chosen_type else 'Model' if not is_wizard else 'TransientModel'
    
     # NOTE: reserved for future use.
@@ -63,7 +111,7 @@ def handle_generate_model(
         'perm_unlink': '',
     }
     
-    assert cli_perms, raise Exception("Perms not valued! Please value the permissions of the model you're about to create!")
+    assert cli_perms, "Perms not valued! Please value the permissions of the model you're about to create!"
 
     splitted_cli_perms = cli_perms.split(',')
     # NOTE: if `splitted_cli_perms[0]` is an integer, then it's not 
@@ -103,7 +151,7 @@ def handle_generate_model(
                 model_type=model_type,
                 # NOTE: a model can both have `_name` and `_inherit`. How to handle this situation?
                 name_or_inherit='_name' if not inherit else '_inherit',
-                model_name_or_inherit=f"'{model_name.replace('_', '.')}'",
+                model_name_or_inherit=f"'{(adapted_inherit if inherit else model_name).replace('_', '.')}'",
             )
         )
         print(f"Model created in {file_name_and_path}")
@@ -115,13 +163,6 @@ def handle_generate_model(
     else:
         init_file_path = f"{'models' if not is_wizard else 'wizards'}/{INIT_FILENAME}"
 
-    # if os.path.isfile(init_file_path):
-    #     with open(init_file_path, 'a') as init_file:
-    #         init_file.write(f"from . import {file_name.replace('.py','') if file_name else model_name}\n")
-    # else:
-    #     with open(init_file_path, 'w') as init_file:
-            # init_file.write(f"from . import {file_name.replace('.py','') if file_name else model_name}\n")
-    
     with open(init_file_path, 'a' if os.path.isfile(init_file_path) else 'w') as init_file:
         init_file.write(f"from . import {file_name.replace('.py', '') if file_name else model_name}\n")
 

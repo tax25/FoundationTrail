@@ -1,6 +1,6 @@
 import re
 import os
-import sys
+# import sys
 
 MAIN_INIT_FILE_CONTENTS = '''from . import models
 from . import wizards
@@ -18,13 +18,65 @@ MANIFEST_FILE_CONTENTS = """{{
 }}
 """
 
-BASE_MODEL_FILE_CONTENTS = f'''from odoo import api, fields, models
+BASE_MODEL_FILE_CONTENTS = '''from odoo import api, fields, models
 
 import logging
 _logger = logging.getLogger(__name__)
 '''
 
 SECURITY_FILE_CONTENTS = 'id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink\n'
+
+GENERATE_MODULE_PARAMETERS = [
+    {
+        'property_name': 'name',
+        'property_type': str,
+        'property_is_optional': False,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Please insert the module name'
+    },
+    {
+        'property_name': 'is_application',
+        'property_type': bool,
+        'property_is_optional': False,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Is the module an application?'
+    },
+    {
+        'property_name': 'dependencies',
+        'property_type': str,
+        'property_is_optional': True,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Please specify any dependencies of the module'
+    },
+    {
+        'property_name': 'author',
+        'property_type': str,
+        'property_is_optional': True,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Please specify the author of the module'
+    },
+    {
+        'property_name': 'version',
+        'property_type': str,
+        'property_is_optional': True,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Please specify the starting version of the module'
+    },
+    {
+        'property_name': 'description',
+        'property_type': str,
+        'property_is_optional': True,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Please insert a description for the module'
+    },
+    {
+        'property_name': 'category',
+        'property_type': str,
+        'property_is_optional': True,
+        'property_allowed_vals': None,
+        'property_ask_for_val_msg': 'Please insert a category for the module'
+    }
+]
 
 def handle_generate_module(
 	name: str,
@@ -40,7 +92,7 @@ def handle_generate_module(
 	
 	module_name = re.sub(r'(?<!^)(?=[A-Z])', '_', name.replace(' ', '_')).lower()
 	
-	assert os.path.isdir(module_name) == False, "Module with same name already exists!"
+	assert not os.path.isdir(module_name), "Module with same name already exists!"
 	
 	print(f"Generating new {'application' if is_application else 'module'}: {module_name}")
 
