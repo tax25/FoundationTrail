@@ -35,6 +35,8 @@ def _check_if_int(value: str) -> bool:
     else:
         return True
 
+class InvalidPermValueException(BaseException):
+    pass
 
 GENERATE_MODEL_PARAMETERS = [
     {
@@ -125,7 +127,7 @@ def handle_generate_model(
             'perm_create': splitted_cli_perms[2],
             'perm_unlink': splitted_cli_perms[3],
         }
-    else:
+    elif ',' in cli_perms:
         perms = {
             'group_id': splitted_cli_perms[0],
             'perm_read': splitted_cli_perms[1],
@@ -133,7 +135,8 @@ def handle_generate_model(
             'perm_create': splitted_cli_perms[3],
             'perm_unlink': splitted_cli_perms[4],
         }
-
+    else:
+        raise InvalidPermValueException()
     
     file_name_and_path = ''
     if 'models' in os.getcwd():
