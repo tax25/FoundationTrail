@@ -70,8 +70,9 @@ def handle_generate_module(
         _ = init_file.write(MAIN_INIT_FILE_CONTENTS)
 
     with open(module_path + '/__manifest__.py', 'w') as manifest_file:
+        manifest_module_name = module_name.replace('_', ' ').title()
         manifest_vals = ManifestObj(
-            name=module_name.replace('_', ' ').title(),
+            name=manifest_module_name,
             version=version if version else DEFAULT_VERSION,
             depends=dependencies.split(',') if dependencies else [],
             author=author if author else os.getlogin(),
@@ -87,11 +88,5 @@ def handle_generate_module(
 
     print(INFO_CREATING_SECURITY_FILE)
     
-    # NOTE: here i create the security file, with, of course, *no* module inside,
-    # since none has yet been created.
-    # **But** before i create a model file, with the name of the model, but no
-    # actual model inside.
-    # Maybe i can skip the default model part, since it probably won't be needed.
-    # In the future i can make that choosable (to create the default model or not).
     with open(module_path + f'/scurity/ir.model.access.csv', 'w') as security_file:
         _ = security_file.write(SECURITY_FILE_CSV_HEADER)
