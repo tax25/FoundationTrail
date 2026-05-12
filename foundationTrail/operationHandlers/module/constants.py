@@ -2,9 +2,10 @@
 
 DEFAULT_VERSION = '0.1'
 
-MAIN_INIT_FILE_CONTENTS = \
-'from . import models\n'
-'from . import wizards'
+MAIN_INIT_FILE_CONTENTS = (
+'from . import models\n' +
+'from . import wizards\n' 
+)
 
 SECURITY_FILE_CSV_HEADER = (
         'id,'           +

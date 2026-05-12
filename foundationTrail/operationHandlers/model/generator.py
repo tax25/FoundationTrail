@@ -1,14 +1,19 @@
 import os
+import re
 
 from foundationTrail.operationHandlers.model.constants import (
     INIT_FILENAME,
+    IMPORT_IN_INIT,
     SECURITY_FILENAME,
-    DEFAULT_PERMS,
     MODEL_FILE_CONTENTS,
     SECURITY_FILE_CONTENTS,
+    INFO_MODEL_FILE_CREATED,
+    INFO_MODEL_ADDED_TO_INIT,
+    INFO_MODEL_ADDED_TO_SECURITY,
     ERR_MODEL_NAME_NOT_VALUED,
     ERR_PERMS_NOT_VALUED,
-    ERR_MODELS_DIR_NOT_FOUND
+    ERR_MODELS_DIR_NOT_FOUND,
+    ERR_COULD_NOT_FIND_SECURITY_FILE_PATH
 )
 
 def _check_if_int(value: str) -> bool:
@@ -21,40 +26,43 @@ def _check_if_int(value: str) -> bool:
 
 def handle_generate_model(
     name: str,
-    chosen_type: str,
-    is_wizard: bool,
+    model_type: str,
+    wizard: bool,
     inherit: str,
-    file_name: str,
-    cli_perms: str
+    filename: str,
+    m_perms: str
 ) -> None:
     assert name and name is not None, ERR_MODEL_NAME_NOT_VALUED
-    assert cli_perms, ERR_PERMS_NOT_VALUED
+    assert m_perms, ERR_PERMS_NOT_VALUED
 
-    # NOTE: turns `name` and `inherit` into 'something_like_this'.
+    # NOTE: turns `name` and `inherit` into 'something_like_this',
     model_name: str = re.sub(
         r'(?<!^)(?=[A-Z])', 
+        '_',
         name.replace(' ', '_')
     ).lower()
 
     adapted_inherit = re.sub(
         r'(?<!^)(?=[A-Z])', 
+        '_',
         inherit.replace(' ', '_')
-    ).lower()
+    ).lower() if inherit else ""
 
-    model_type = 'Model'
-    if chosen_type:
-        model_type = re.sub(
+    chosen_type = 'Model'
+    if model_type:
+        chosen_type = re.sub(
             '^(M|m)odels.?',
             '',
-            chosen_type
+            model_type 
         ).capitalize()
 
-    elif is_wizard:
-        model_type = 'TransientModel'
-
-    model_created = False
-    model_added_to_init = False
-    model_added_to_security = False
+    elif wizard:
+        chosen_type = 'TransientModel'
+    
+    # NOTE: for future use
+    model_created: bool = False
+    model_added_to_init: bool = False
+    model_added_to_security: bool = False
 
     perms = {
         'group_id': '',
@@ -64,11 +72,11 @@ def handle_generate_model(
         'perm_unlink': '',
     }
 
-    splitted_cli_perms = cli_perms.split(',')
+    splitted_cli_perms = m_perms.split(',')
     # NOTE: if `splitted_cli_perms[0]` is an integer, then it's not 
     # a valid value for the group_id field, so the first value
     # passed must be `perm_read`, and the `group_id` is simply left empty.
-    if _check_if_int(cli_perms[0]):
+    if _check_if_int(m_perms[0]):
         perms = {
             'group_id': '',
             'perm_read': splitted_cli_perms[0],
@@ -86,8 +94,8 @@ def handle_generate_model(
         }
     
     file_name_and_path = ''
-    new_model_dir = 'wizards' if is_wizard else 'models'
-    tmp_filename = (file_name if file_name else model_name).replace('.py', '')
+    new_model_dir = 'wizards' if wizard else 'models'
+    tmp_filename = (filename if filename else model_name).replace('.py', '')
 
     if new_model_dir in os.getcwd():
         file_name_and_path = os.getcwd() + f"/{tmp_filename}.py"
@@ -106,13 +114,16 @@ def handle_generate_model(
     
     with open(file_name_and_path, 'w') as model_file:
         new_class = model_name.replace('_', ' ').title().replace(' ', '')
-        name_or_inherit = '_name' if not inherit else '_inherit'
+        name_or_inherit = '_name' if not adapted_inherit else '_inherit'
+        model_name_or_inherit_val = \
+                f"'{(adapted_inherit if adapted_inherit else model_name).replace('_', '.')}'"
 
-        model_file.write(
+        _ = model_file.write(
             MODEL_FILE_CONTENTS.format(
                 model_class=new_class,
-                model_type=model_type,
+                model_type=chosen_type,
                 name_or_inherit=name_or_inherit,
+                model_name_or_inherit=model_name_or_inherit_val 
             )
         )
         model_created = True
@@ -127,12 +138,12 @@ def handle_generate_model(
     append_or_write = 'a' if os.path.isfile(init_file_path) else 'w'
     with open(init_file_path, append_or_write) as init_file:
         import_stmt = IMPORT_IN_INIT.format(filename=tmp_filename)
-        init_file.write(import_stmt)
+        _ = init_file.write(import_stmt)
         model_added_to_init = True
         print(
             INFO_MODEL_ADDED_TO_INIT.format(
                 init_path=init_file_path,
-                import_statement=import_stmt
+                import_statement=import_stmt.replace('\n', '')
             )
         )
     
@@ -144,10 +155,11 @@ def handle_generate_model(
         security_file_path = f'security/{SECURITY_FILENAME}'
 
     if not security_file_path:
+        print(ERR_COULD_NOT_FIND_SECURITY_FILE_PATH)
         return
 
     with open(security_file_path, 'a') as sec_file:
-        sec_file.write(
+        _ = sec_file.write(
             SECURITY_FILE_CONTENTS.format(
                 model_name=model_name,
                 **perms

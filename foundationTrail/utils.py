@@ -6,6 +6,9 @@ class FTArguments:
     version: bool = False
     interactive: bool = False
     explain: str = ""
+    
+    name: str = ""
+    filename: str = ""
 
     generate: bool = False
 
@@ -38,6 +41,27 @@ class FTArguments:
     perm_create: bool = False
     perm_unlink: bool = False
     
+    def get_module_props_in_dict(self) -> dict[str, str | bool]:
+        return {
+            'name': self.name,
+            'app': self.app,
+            'deps': self.deps,
+            'author': self.author,
+            'm_version': self.m_version,
+            'description': self.description,
+            'category': self.category,
+        }
+    
+    def get_model_props_in_dict(self):
+        return {
+            'name': self.name,
+            'model_type': self.model_type,
+            'inherit': self.inherit,
+            'wizard': self.wizard,
+            'filename': self.filename,
+            'm_perms': self.m_perms,
+        }
+
     @override
     def __str__(self):
         str_to_return = f"""
@@ -45,6 +69,8 @@ class FTArguments:
                 version: {self.version},
                 interactive: {self.interactive},
                 explain: {self.explain},
+                name: {self.name},
+                filename: {self.filename},
                 generate: {self.generate},
                 module: {self.module},
                 app: {self.app},

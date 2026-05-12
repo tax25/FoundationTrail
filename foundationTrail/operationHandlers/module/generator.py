@@ -22,26 +22,26 @@ from foundationTrail.operationHandlers.module.constants import (
 
 def handle_generate_module(
     name: str,
-    is_application: bool,
-    dependencies: str,
+    app: bool,
+    deps: str,
     author: str,
-    version: str,
+    m_version: str,
     description: str,
     category: str
 ) -> None:
     assert name, \
             ERR_MODULE_NAME_NOT_VALUED
 
-    module_name = re.sub(r'', '_', name.replace(' ', '_')).lower()
+    module_name = re.sub(r'(?<!^)(?=[A-Z])', '_', name.replace(' ', '_')).lower()
 
     assert not os.path.isdir(module_name), \
             ERR_MODULE_WITH_SAME_NAME_EXISTS.format(module_name=module_name)
     
-    logs_resource_type = 'Application' if is_application else 'Module'
+    logs_resource_type = 'Application' if app else 'Module'
 
     print(
         INFO_GENERATING_APPLICATION.format(
-            resource='Application' if is_application else 'Module',
+            resource='Application' if app else 'Module',
             resource_name=module_name
         )
     )
@@ -73,10 +73,10 @@ def handle_generate_module(
         manifest_module_name = module_name.replace('_', ' ').title()
         manifest_vals = ManifestObj(
             name=manifest_module_name,
-            version=version if version else DEFAULT_VERSION,
-            depends=dependencies.split(',') if dependencies else [],
+            version=m_version if m_version else DEFAULT_VERSION,
+            depends=deps.split(',') if deps else [],
             author=author if author else os.getlogin(),
-            application=is_application,
+            application=app,
             description=description if description else '',
             category=category if category else ''
         )
@@ -88,5 +88,5 @@ def handle_generate_module(
 
     print(INFO_CREATING_SECURITY_FILE)
     
-    with open(module_path + f'/scurity/ir.model.access.csv', 'w') as security_file:
+    with open(module_path + f'/security/ir.model.access.csv', 'w') as security_file:
         _ = security_file.write(SECURITY_FILE_CSV_HEADER)

@@ -8,6 +8,19 @@ from foundationTrail import (
 
 from foundationTrail.utils import FTArguments
 
+from foundationTrail.operationHandlers.module.generator \
+        import handle_generate_module
+
+from foundationTrail.operationHandlers.model.generator \
+        import handle_generate_model
+
+# from foundationTrail.operationHandlers.security.generator \
+#         import handle_generate_security
+
+# from foundationTrail.operationHandlers.view.generator \
+#         import handle_generate_view
+
+
 from foundationTrail.operationHandlers.send_help import (
     send_help,
     explain_module_generation,
@@ -30,9 +43,12 @@ def foundationTrail_entrypoint() -> None:
     
     _ = parser.add_argument_group('Miscellaneous')
     _ = parser.add_argument('--help', action='store_true')
-    _ = parser.add_argument('-V', '--version', action='store_true', type=bool)
+    _ = parser.add_argument('-V', '--version', action='store_true')
     _ = parser.add_argument('-I', '--interactive', action='store_true')
     _ = parser.add_argument('-e', '--explain', type=str)
+    
+    _ = parser.add_argument('-n', '--name', type=str)
+    _ = parser.add_argument('-fn', '--filename', type=str)
 
     _ = parser.add_argument_group('Basic Actions')
     _ = parser.add_argument('-g', '--generate', action='store_true')
@@ -75,7 +91,11 @@ def foundationTrail_entrypoint() -> None:
     _ = parser.parse_args(namespace=cli_args)
     
     if cli_args.version:
-        print(FOUNDATION_TRAIL_INSTALLED_VERSION.format(version=foundationTrailVersion))
+        print(
+            FOUNDATION_TRAIL_INSTALLED_VERSION.format(
+                version=foundationTrailVersion
+            )
+        )
         sys.exit()
     
     if cli_args.help:
@@ -91,6 +111,16 @@ def foundationTrail_entrypoint() -> None:
             explain_view_generation()
         elif cli_args.explain in ('s', 'security', '-s', '--security'):
             explain_security_generation()
+    
+    if cli_args.generate:
+        if cli_args.module:
+            handle_generate_module(**cli_args.get_module_props_in_dict())
+        elif cli_args.model:
+            handle_generate_model(**cli_args.get_model_props_in_dict())
+        elif cli_args.view:
+            pass
+        elif cli_args.security:
+            pass
 
 
 if __name__ == '__main__':

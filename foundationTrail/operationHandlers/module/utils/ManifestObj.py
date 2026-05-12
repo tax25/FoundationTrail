@@ -36,7 +36,7 @@ class ManifestObj:
             "{\n"                                                   +
                     f"\t'name': \"{self.name}\",\n"                 +
                     f"\t'version': \"{self.version}\",\n"           +
-                    f"\t'depends': \"{self.depends}\",\n"           +
+                    f"\t'depends': {self.depends},\n"               +
                     f"\t'author': \"{self.author}\",\n"             +
                     f"\t'application': {self.application},\n"       +
                     f"\t'description': \"{self.description}\",\n"   +

@@ -12,8 +12,8 @@ DEFAULT_PERMS = {
     'perm_unlink': 0
 }
 
-MODEL_FILE_CONTENTS = """
-from odoo import api, fields, models
+MODEL_FILE_CONTENTS = \
+"""from odoo import api, fields, models
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -40,3 +40,5 @@ ERR_MODEL_NAME_NOT_VALUED = 'Model name not valued!'
 ERR_PERMS_NOT_VALUED = "Perms not valued! Please attribute a value to the permissions of the model you're about to create!"
 
 ERR_MODELS_DIR_NOT_FOUND = "Cannot find /{directory} directory, so creating the file in the current directory ({current_directory})."
+
+ERR_COULD_NOT_FIND_SECURITY_FILE_PATH = "Could not find the security file path."
