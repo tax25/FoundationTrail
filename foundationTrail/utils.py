@@ -196,6 +196,19 @@ class FTArguments:
             'filename': self.filename,
             'm_perms': self.m_perms,
         }
+    
+    def fn_get_security_props_in_dict(self):
+        return {
+            'security_file_name': self.filename.replace('.csv', '') if self.filename else 'ir.model.access',
+            'line_id': self.line_id,
+            'line_name': self.line_name,
+            'model_id': self.model_id,
+            'group_id': self.group_id,
+            'perm_read': self.perm_read,
+            'perm_write': self.perm_write,
+            'perm_create': self.perm_create,
+            'perm_unlink': self.perm_unlink,
+        }
 
     @override
     def __str__(self):
