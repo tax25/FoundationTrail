@@ -41,6 +41,7 @@ class ManifestObj:
                     f"\t'application': {self.application},\n"       +
                     f"\t'description': \"{self.description}\",\n"   +
                     f"\t'category': \"{self.category}\",\n"         +
+                    f"\t'data': \"{self.data}\",\n"                 +
             "}\n"
         )
 

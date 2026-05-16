@@ -61,14 +61,14 @@ def handle_generate_security(
                     line_name=line_name,
                     model_id=f"model_{model_id.replace('model_', '')}",
                     group_id=group_id,
-                    perm_read=perm_read,
-                    perm_write=perm_write,
-                    perm_create=perm_create,
-                    perm_unlink=perm_unlink,
+                    perm_read=int(perm_read),
+                    perm_write=int(perm_write),
+                    perm_create=int(perm_create),
+                    perm_unlink=int(perm_unlink),
                 )
             )
     
-    manifest_file_path = ''
+    manifest_file_path = '.'
     if not os.path.isfile(MANIFEST_FILENAME):
         os.chdir('..')
         while True:

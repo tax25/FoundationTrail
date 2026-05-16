@@ -1,4 +1,3 @@
-import argparse
 import sys
 
 from foundationTrail import (
@@ -14,8 +13,8 @@ from foundationTrail.operationHandlers.module.generator \
 from foundationTrail.operationHandlers.model.generator \
         import handle_generate_model
 
-# from foundationTrail.operationHandlers.security.generator \
-#         import handle_generate_security
+from foundationTrail.operationHandlers.security.generator \
+        import handle_generate_security
 
 # from foundationTrail.operationHandlers.view.generator \
 #         import handle_generate_view
@@ -66,7 +65,7 @@ def foundationTrail_entrypoint() -> None:
         elif cli_args.view:
             pass
         elif cli_args.security:
-            pass
+            handle_generate_security(**cli_args.fn_get_security_props_in_dict())
 
 
 if __name__ == '__main__':
