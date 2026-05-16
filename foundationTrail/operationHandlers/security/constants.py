@@ -4,7 +4,7 @@ MANIFEST_FILENAME = '__manifest__.py'
 
 SECURITY_FILE_HEADER = 'id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink\n'
 
-SECURITY_FILE_CONTENTS = "\n{line_id},{line_name},{model_id},{group_id},{perm_read},{perm_write},{perm_create},{perm_unlink}\n"
+SECURITY_FILE_CONTENTS = "{line_id},{line_name},{model_id},{group_id},{perm_read},{perm_write},{perm_create},{perm_unlink}\n"
 
 INFO_SECURITY_FILE_CREATED = 'Security file created successfully.'
 

@@ -145,12 +145,8 @@ class FTArguments:
     def __init__(self):
         cli_args: list[Argument] = self._fn_flatten_args_descr(ARGUMENTS_DESCR)
 
-        print("valore cli_args: ", cli_args, len(cli_args))
-
         class_props = self._fn_get_class_props_list()
         
-        print("valore class_props: ", class_props, len(class_props))
-
         if len(class_props) != len(cli_args):
             print("ERROR: Contents of ARGUMENTS_DESCR and respective class properties do not match!")
             return

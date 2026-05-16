@@ -50,23 +50,24 @@ def handle_generate_security(
         print(ERR_SEC_FILE_NOT_FOUND.format(currentWD=os.getcwd()))
         file_name_and_path = security_file_name
 
-    has_to_create_sec_file = os.path.isfile(file_name_and_path)
-    
-    with open(file_name_and_path, 'w' if has_to_create_sec_file else 'a') as security_file:
-        if has_to_create_sec_file:
+    sec_file_exists = os.path.isfile(file_name_and_path)
+
+    with open(file_name_and_path, 'a' if sec_file_exists else 'w') as security_file:
+        if not sec_file_exists:
             _ = security_file.write(SECURITY_FILE_HEADER)
-            _ = security_file.write(
-                SECURITY_FILE_CONTENTS.format(
-                    line_id=line_id,
-                    line_name=line_name,
-                    model_id=f"model_{model_id.replace('model_', '')}",
-                    group_id=group_id,
-                    perm_read=int(perm_read),
-                    perm_write=int(perm_write),
-                    perm_create=int(perm_create),
-                    perm_unlink=int(perm_unlink),
-                )
+
+        _ = security_file.write(
+            SECURITY_FILE_CONTENTS.format(
+                line_id=line_id,
+                line_name=line_name,
+                model_id=f"model_{model_id.replace('model_', '')}",
+                group_id=group_id,
+                perm_read=int(perm_read),
+                perm_write=int(perm_write),
+                perm_create=int(perm_create),
+                perm_unlink=int(perm_unlink),
             )
+        )
     
     manifest_file_path = '.'
     if not os.path.isfile(MANIFEST_FILENAME):
@@ -90,7 +91,7 @@ def handle_generate_security(
         if not manifest_content or manifest_content[0] != '{':
             raise Exception(ERR_MANIFEST_EMPTY_OR_NOT_VALID)
     
-        manifest_dict = json.loads(
+        manifest_dict: dict[str, list[str]] = json.loads(
             "".join(manifest_content.split())
                 .replace('\n', '')
                 .replace('\t', '')
@@ -107,6 +108,6 @@ def handle_generate_security(
 
         _ = manifest_file.write(json.dumps(manifest_dict, indent=4).replace('true', 'True').replace('false', 'False'))
 
-        manifest_file.truncate()
+        _ = manifest_file.truncate()
 
         print(INFO_SECURITY_FILE_CREATED)
