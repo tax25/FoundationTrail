@@ -205,6 +205,14 @@ class FTArguments:
             'perm_create': self.perm_create,
             'perm_unlink': self.perm_unlink,
         }
+    
+    def fn_get_view_props_in_dict(self):
+        return {
+            'view_name': self.filename.replace('.xml', ''),
+            'model': self.view_model,
+            'inherit_view': self.inherit_view,
+            'is_for_wizard': self.wizard,
+        }
 
     @override
     def __str__(self):
