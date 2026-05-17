@@ -8,7 +8,8 @@ VIEW_FILE_TMPLT = \
         
         <record id="{view_name} model="ir.ui.view">
             <field name="name">{view_name.replace('_', '.')}</field>
-            <field name="model">{model.replace('_', '.') if model is not None else ''}</field>
+            <field name="model">{model.replace('_', '.')}</field>
+            {inherit_id_string}
             <field name="arch" type="xml"></field>
         </record>
 
