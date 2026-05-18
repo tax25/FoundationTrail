@@ -12,7 +12,6 @@ class ManifestObj:
     category: str
     data: list[str]
     
-        
     def __init__(
             self,
             manifest_filename: str = '__manifest__.py',
@@ -50,6 +49,7 @@ class ManifestObj:
                 return absolute_path(curdir)
             if absolute_path(curdir) == stop_dir:
                 return ''
+            chdir('..')
     
     @override
     def __str__(self):
