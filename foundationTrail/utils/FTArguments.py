@@ -2,6 +2,8 @@ from argparse import ArgumentParser
 from dataclasses import dataclass
 from typing import override
 
+from foundationTrail.utils.InteractiveModeUtils import InteractiveProp
+
 @dataclass
 class Argument:
     shortForm: str = ''
@@ -161,6 +163,22 @@ class FTArguments:
                 return
         
         _ = self._parser.parse_args(namespace=self)
+    
+    def fn_args_from_interactive(self, interactive_conf: list[InteractiveProp]):
+        for param in interactive_conf:
+            query_string = \
+                    "{main_query}{optional_specifier}{yes_or_no}: ".format(
+                            main_query=param.query_msg,
+                            optional_specifier='[Optional]' if param.is_optional else '',
+                            yes_or_no='[y/n]' if param.prop_type == bool else ''
+                        )
+
+            _param_val = input(query_string)
+            
+            # TODO: implement checking if the inserted value is compliant with the specified `prop_type` 
+            # and that if any `allowed_vals` are specified, that the inserted value is within those as well.
+            # Moreover, implement assign the inserted value to the right property of the `FTArgument` instance.
+            pass
 
     def fn_get_module_props_in_dict(self) -> dict[str, str | bool]:
         return {
