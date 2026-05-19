@@ -1,3 +1,4 @@
+from ast import literal_eval
 from typing import override
 from os.path import isfile
 import json
@@ -36,7 +37,7 @@ class Manifest:
     pre_init_hook: str
     post_init_hook: str
     uninstall_hook: str
-    
+
     _path: str = ''
 
     def __init__(self,
@@ -93,7 +94,7 @@ class Manifest:
         manifest_file_path = manifest_path if manifest_path else self._path
     
         if not manifest_file_path or not isfile(manifest_file_path):
-            raise ManifestPathNotValid()
+            raise ManifestPathNotValid(manifest_file_path)
         
         manifest_fd = open(manifest_file_path, 'r')
 
@@ -104,16 +105,7 @@ class Manifest:
         if not manifest_contents or manifest_contents[0] != '{':
             raise ManifestContentNotValid()
         
-        manifest_dict = json.loads( # pyright: ignore[reportAny]
-            "".join(manifest_contents.split())
-                .replace('\n', '')
-                .replace('\t', '')
-                .replace("'", '"')
-                .replace('True', 'true')
-                .replace('False', 'false')
-                .replace(',]', ']')
-                .replace(',}', '}')
-        )
+        manifest_dict = literal_eval(manifest_contents) # pyright: ignore[reportAny]
         
         self.name = manifest_dict['name']
         self.version = manifest_dict.get('version', '0.1') # pyright: ignore[reportAny]

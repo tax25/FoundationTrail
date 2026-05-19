@@ -1,9 +1,16 @@
-import os
-import json
+from os import getcwd, curdir, getlogin, chdir
+from os.path import (
+    abspath as absolute_path,
+    exists as path_exists,
+    isfile
+)
+
 import platform
 
+from foundationTrail.utils.ManifestUtils import Manifest, ManifestContentNotValid
+
 from foundationTrail.operationHandlers.security.constants import (
-        MANIFEST_FILE_NAME_TMPLT,
+        SECURITY_FILE_NAME_FOR_MANIFEST_TMPLT,
         MANIFEST_FILENAME,
         SECURITY_FILE_HEADER,
         SECURITY_FILE_CONTENTS,
@@ -18,11 +25,11 @@ from foundationTrail.operationHandlers.security.constants import (
 def _get_end_directory():
     match platform.system():
         case 'Darwin':
-            return f'/Users/{os.getlogin()}'
+            return f'/Users/{getlogin()}'
         case 'Linux':
-            return f'/home/{os.getlogin()}'
+            return f'/home/{getlogin()}'
         case _:
-            return 'lmao'
+            return '/'
 
 def handle_generate_security(
     security_file_name: str,
@@ -35,22 +42,22 @@ def handle_generate_security(
 	perm_create: int,
 	perm_unlink: int,
 ):
-    manifest_file_name = MANIFEST_FILE_NAME_TMPLT.format(
-        name=security_file_name
+    security_file_name_for_manifest = SECURITY_FILE_NAME_FOR_MANIFEST_TMPLT.format(
+        name=security_file_name.replace('.csv', '')
     )
 
     file_name_and_path = ''
-    if 'security' in os.getcwd():
-        file_name_and_path = f'{os.getcwd()}/{security_file_name}.csv'
-    elif os.path.exists(f'{os.getcwd()}/security'):
-        file_name_and_path = f'{os.getcwd()}/security/{security_file_name}.csv'
-    elif os.path.exists(f'{os.getcwd()}/../security') and os.path.isfile(f'{os.getcwd()}/../security/{security_file_name}.csv'):
-        file_name_and_path = f'{os.getcwd()}/../security/{security_file_name}.csv'
+    if 'security' in getcwd():
+        file_name_and_path = f'{getcwd()}/{security_file_name}.csv'
+    elif path_exists(f'{getcwd()}/security'):
+        file_name_and_path = f'{getcwd()}/security/{security_file_name}.csv'
+    elif path_exists(f'{getcwd()}/../security') and isfile(f'{getcwd()}/../security/{security_file_name}.csv'):
+        file_name_and_path = f'{getcwd()}/../security/{security_file_name}.csv'
     else:
-        print(ERR_SEC_FILE_NOT_FOUND.format(currentWD=os.getcwd()))
+        print(ERR_SEC_FILE_NOT_FOUND.format(currentWD=getcwd()))
         file_name_and_path = security_file_name
 
-    sec_file_exists = os.path.isfile(file_name_and_path)
+    sec_file_exists = isfile(file_name_and_path)
 
     with open(file_name_and_path, 'a' if sec_file_exists else 'w') as security_file:
         if not sec_file_exists:
@@ -70,44 +77,38 @@ def handle_generate_security(
         )
     
     manifest_file_path = '.'
-    if not os.path.isfile(MANIFEST_FILENAME):
-        os.chdir('..')
+    if not isfile(MANIFEST_FILENAME):
+        chdir('..')
         while True:
-            if not os.path.isfile(MANIFEST_FILENAME):
-                os.chdir('..')
+            if not isfile(MANIFEST_FILENAME):
+                chdir('..')
             else:
-                manifest_file_path = os.path.abspath(os.curdir)
+                manifest_file_path = absolute_path(curdir)
                 break
-            if os.path.abspath(os.curdir) == _get_end_directory():
+            if absolute_path(curdir) == _get_end_directory():
                 print(
                     ERR_MANIFEST_FILE_NOT_FOUND.format(
                         manifest_file=MANIFEST_FILENAME
                     )
                 )
                 return
+    else:
+        manifest_file_path = absolute_path(curdir)
+
+    try:
+        manifest_obj = Manifest(manifest_path=f'{manifest_file_path}/{MANIFEST_FILENAME}')
+    except ManifestContentNotValid:
+        print(ERR_MANIFEST_EMPTY_OR_NOT_VALID)
+        return
     
-    with open(f'{manifest_file_path}/{MANIFEST_FILENAME}', 'r+') as manifest_file:
-        manifest_content = manifest_file.read()
-        if not manifest_content or manifest_content[0] != '{':
-            raise Exception(ERR_MANIFEST_EMPTY_OR_NOT_VALID)
-    
-        manifest_dict: dict[str, list[str]] = json.loads(
-            "".join(manifest_content.split())
-                .replace('\n', '')
-                .replace('\t', '')
-                .replace("'", '"')
-                .replace('False', 'false')
-                .replace('True', 'true')
-                .replace(',]', ']')
-                .replace(',}', '}')
-        )
+    if security_file_name_for_manifest not in manifest_obj.data:
+        manifest_obj.data.append(security_file_name_for_manifest)
 
-        manifest_dict['data'].append(manifest_file_name)
+        with open(f'{manifest_file_path}/{MANIFEST_FILENAME}', 'r+') as manifest_file:
+            _ = manifest_file.seek(0)
 
-        _ = manifest_file.seek(0)
+            _ = manifest_file.write(manifest_obj.fn_manifest_to_pretty_string())
 
-        _ = manifest_file.write(json.dumps(manifest_dict, indent=4).replace('true', 'True').replace('false', 'False'))
+            _ = manifest_file.truncate()
 
-        _ = manifest_file.truncate()
-
-        print(INFO_SECURITY_FILE_CREATED)
+    print(INFO_SECURITY_FILE_CREATED)

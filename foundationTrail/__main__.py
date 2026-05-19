@@ -5,7 +5,7 @@ from foundationTrail import (
     FOUNDATION_TRAIL_INSTALLED_VERSION
 )
 
-from foundationTrail.utils import FTArguments
+from foundationTrail.utils.FTArguments import FTArguments
 
 from foundationTrail.operationHandlers.module.generator \
         import handle_generate_module
@@ -16,8 +16,8 @@ from foundationTrail.operationHandlers.model.generator \
 from foundationTrail.operationHandlers.security.generator \
         import handle_generate_security
 
-# from foundationTrail.operationHandlers.view.generator \
-#         import handle_generate_view
+from foundationTrail.operationHandlers.view.generator \
+        import handle_generate_view
 
 
 from foundationTrail.operationHandlers.send_help import (
@@ -59,13 +59,13 @@ def foundationTrail_entrypoint() -> None:
     
     if cli_args.generate:
         if cli_args.module:
-            handle_generate_module(**cli_args.fn_get_module_props_in_dict())
+            handle_generate_module(**cli_args.fn_get_module_props_in_dict()) # pyright: ignore[reportArgumentType]
         elif cli_args.model:
-            handle_generate_model(**cli_args.fn_get_model_props_in_dict())
+            handle_generate_model(**cli_args.fn_get_model_props_in_dict()) # pyright: ignore[reportArgumentType]
         elif cli_args.view:
-            pass
+            handle_generate_view(**cli_args.fn_get_view_props_in_dict()) # pyright: ignore[reportArgumentType]
         elif cli_args.security:
-            handle_generate_security(**cli_args.fn_get_security_props_in_dict())
+            handle_generate_security(**cli_args.fn_get_security_props_in_dict()) # pyright: ignore[reportArgumentType]
 
 
 if __name__ == '__main__':

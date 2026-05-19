@@ -1,4 +1,4 @@
-MANIFEST_FILE_NAME_TMPLT = 'security/{name}'
+SECURITY_FILE_NAME_FOR_MANIFEST_TMPLT = 'security/{name}.csv'
 
 MANIFEST_FILENAME = '__manifest__.py'
 

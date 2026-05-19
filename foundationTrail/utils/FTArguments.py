@@ -208,9 +208,9 @@ class FTArguments:
     
     def fn_get_view_props_in_dict(self):
         return {
-            'view_name': self.filename.replace('.xml', ''),
+            'view_name': self.filename.replace('.xml', '') if self.filename else self.name.replace('.xml', ''),
             'model': self.view_model if self.view_model else '',
-            'inherit_view': self.inherit_view,
+            'inherit_id': self.inherit_view,
             'is_for_wizard': self.wizard,
         }
 

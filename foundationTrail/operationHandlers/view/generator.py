@@ -6,11 +6,17 @@ from os.path import (
     isfile,
 )
 
-from foundationTrail.operationHandlers.generate_view_handler import MANIFEST_FILENAME
+from foundationTrail.utils.ManifestUtils import Manifest, ManifestContentNotValid
 from foundationTrail.operationHandlers.view.constants import (
     INHERIT_ID_TMPLT,
     VIEW_FILE_TMPLT,
-    ERR_VIEW_DIRECTORY_NOT_FOUND
+    MANIFEST_FILENAME,
+    
+    INFO_VIEW_FILE_CREATED,
+
+    ERR_VIEW_DIRECTORY_NOT_FOUND,
+    ERR_MANIFEST_FILE_NOT_FOUND,
+    ERR_MANIFEST_VALUE_NOT_VALID
 )
 
 def _get_end_directory():
@@ -42,14 +48,13 @@ def handle_generate_view(
 
     if view_directory in getcwd():
         file_name_and_path = getcwd() + '/' + view_file_name 
-    elif path_exists(getcwd() + '/' + view_file_name):
-        file_name_and_path = getcwd() + '/' + view_file_name
+    elif path_exists(getcwd() + '/' + view_directory):
+        file_name_and_path = getcwd() + '/' + file_name_and_dir
     elif path_exists(getcwd() + '/../' + view_file_name):
-        file_name_and_path = getcwd() + '/../' + view_file_name
-        pass
+        file_name_and_path = getcwd() + '/../' + file_name_and_dir 
     else:
         print(ERR_VIEW_DIRECTORY_NOT_FOUND.format(
-                view_directory_name=view_directory,
+                view_directory=view_directory,
                 current_directory=getcwd()
             )
         )
@@ -60,32 +65,46 @@ def handle_generate_view(
         _ = view_file.write(
             VIEW_FILE_TMPLT.format(
                 view_name=view_name,
-                model=model,
+                name=view_name.replace('_', '.'),
+                model=model.replace('_', '.'),
                 inherit_id_string=INHERIT_ID_TMPLT.format(
-                    inherit_id=inherit_id if inherit_id else ''
+                    inherited_view=inherit_id if inherit_id else ''
                 )
             )
         )
     
     manifest_file_path = ''
-    if isfile(MANIFEST_FILENAME):
+    if not isfile(MANIFEST_FILENAME):
         chdir('..')
         while True:
             if not isfile(MANIFEST_FILENAME):
                 chdir('..')
             else:
-                manifest_file_path = absolute_path(curdir)
+                manifest_file_path = absolute_path(curdir) + '/' + MANIFEST_FILENAME
                 break 
 
             if absolute_path(curdir) == _get_end_directory():
-                print(ERR_MANIFEST_FILE_NOT_FOUND)
+                print(ERR_MANIFEST_FILE_NOT_FOUND.format(view_generation_dir=file_name_and_dir))
                 return
     else:
-        manifest_file_path = absolute_path(curdir)
+        manifest_file_path = absolute_path(curdir) + '/' + MANIFEST_FILENAME
     
-    with open(manifest_file_path + '/' + MANIFEST_FILENAME, 'r+') as manifest_file:
-        manifest_content = manifest_file.read()
+    try:
+        manifest_obj = Manifest(manifest_path=manifest_file_path)
+    except ManifestContentNotValid:
+        print(ERR_MANIFEST_VALUE_NOT_VALID)
+        return
 
+    if file_name_and_dir not in manifest_obj.data:
+        manifest_obj.data.append(file_name_and_dir)
 
+    with open(manifest_file_path, 'w') as manifest_file:
+        _ = manifest_file.seek(0)
+
+        _ = manifest_file.write(manifest_obj.fn_manifest_to_pretty_string())
+
+        _ = manifest_file.truncate()
+
+        print(INFO_VIEW_FILE_CREATED.format(file_name=file_name_and_dir))
 
 
