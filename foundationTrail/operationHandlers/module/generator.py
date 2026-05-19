@@ -1,7 +1,9 @@
 import re
 import os
 
-from foundationTrail.operationHandlers.module.utils.ManifestObj import ManifestObj
+# from foundationTrail.operationHandlers.module.utils.ManifestObj import ManifestObj
+from foundationTrail.utils.ManifestUtils import Manifest
+
 from foundationTrail.operationHandlers.module.constants import (
     # MISCELLANEOUS
     DEFAULT_VERSION,
@@ -71,7 +73,7 @@ def handle_generate_module(
 
     with open(module_path + '/__manifest__.py', 'w') as manifest_file:
         manifest_module_name = module_name.replace('_', ' ').title()
-        manifest_vals = ManifestObj(
+        manifest_obj: Manifest= Manifest(
             name=manifest_module_name,
             version=m_version if m_version else DEFAULT_VERSION,
             depends=deps.split(',') if deps else [],
@@ -81,7 +83,7 @@ def handle_generate_module(
             category=category if category else ''
         )
 
-        _ = manifest_file.write(str(manifest_vals))
+        _ = manifest_file.write(manifest_obj.fn_manifest_to_pretty_string())
 
     with open(module_path + '/models/__init__.py', 'w') as models_init:
         _ = models_init.write('') 

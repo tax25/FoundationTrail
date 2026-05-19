@@ -30,7 +30,7 @@ class Manifest:
     auto_install: bool
     external_dependencies: dict[str, list[str] | dict[str, str]]
     application: bool
-    assets: dict[str, str]
+    assets: dict[str, list[str]]
     installable: bool
     mantainer: str
     pre_init_hook: str
@@ -53,7 +53,7 @@ class Manifest:
         auto_install: bool = False,
         external_dependencies: dict[str, list[str] | dict[str, str]] | None = None,
         application: bool = False,
-        assets: dict[str, str] | None = None,
+        assets: dict[str, list[str]] | None = None,
         installable: bool = True,
         mantainer: str = '',
         pre_init_hook: str = '',
@@ -99,6 +99,8 @@ class Manifest:
 
         manifest_contents = manifest_fd.read()
         
+        manifest_fd.close()
+
         if not manifest_contents or manifest_contents[0] != '{':
             raise ManifestContentNotValid()
         
@@ -161,5 +163,33 @@ class Manifest:
         return manifest_string
 
 if __name__ == '__main__':
+    # NOTE: testing the class
     my_manifest = Manifest(
-    print("valore manifest: ", my_man.fn_manifest_to_pretty_string())
+        name='my_module_name',
+        version='0.2',
+        description="this is the description",
+        author='il tuo autore',
+        website='https://yourwebsite.com/',
+        license='LGPL-3',
+        category='this is the category',
+        depends=['aa', 'bb'],
+        demo=['daa', 'dbb'],
+        auto_install=True,
+        external_dependencies={
+            'python': ['python-ldap'],
+            'apt': {
+                'python-ldap': 'python3-ldap'
+            }
+        },
+        application=True,
+        assets={
+            'assets': ['aaa']
+        },
+        installable=False,
+        mantainer='sos',
+        pre_init_hook='your_init_hook',
+        post_init_hook='your_post_init_hook',
+        uninstall_hook='your_uninstall_hook'
+    )
+    
+    print("manifest value: ", my_manifest.fn_manifest_to_pretty_string())
