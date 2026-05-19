@@ -1,23 +1,13 @@
 from argparse import ArgumentParser
+from dataclasses import dataclass
 from typing import override
 
+@dataclass
 class Argument:
     shortForm: str = ''
     longForm: str = ''
     argumentType: type = type
     action: str = ''
-    
-    def __init__(self,
-             short: str, 
-             long: str, 
-             argType: type = type,
-             action: str=''
-    ):
-        self.shortForm = short
-        self.longForm = long
-        self.argumentType = argType
-        self.action = action
-
 
 # NOTE:
 '''
@@ -34,9 +24,9 @@ ARGUMENTS_DESCR = {
         Argument('-h', '--help', action='store_true'),
         Argument('-V', '--version', action='store_true'),
         Argument('-I', '--interactive', action='store_true'),
-        Argument('-e', '--explain', argType=str),
-        Argument('-n', '--name', argType=str),
-        Argument('-fn', '--filename', argType=str),
+        Argument('-e', '--explain', argumentType=str),
+        Argument('-n', '--name', argumentType=str),
+        Argument('-fn', '--filename', argumentType=str),
     ],
     'Basic Actions': [
         Argument('-g', '--generate', action='store_true'),
@@ -44,31 +34,31 @@ ARGUMENTS_DESCR = {
     'Specifics.Modules': [
         Argument('-M', '--module', action='store_true'), 
         Argument('-a', '--app', action='store_true'),
-        Argument('-d', '--deps', argType=str),
-        Argument('-A', '--author', argType=str),
-        Argument('-mv', '--m_version', argType=str),
-        Argument('-D', '--description', argType=str),
-        Argument('-c', '--category', argType=str),
+        Argument('-d', '--deps', argumentType=str),
+        Argument('-A', '--author', argumentType=str),
+        Argument('-mv', '--m_version', argumentType=str),
+        Argument('-D', '--description', argumentType=str),
+        Argument('-c', '--category', argumentType=str),
     ],
     'Specifics.Models': [
         Argument('-m', '--model', action='store_true'), 
-        Argument('-mt', '--model_type', argType=str),
-        Argument('-i', '--inherit', argType=str),
+        Argument('-mt', '--model_type', argumentType=str),
+        Argument('-i', '--inherit', argumentType=str),
         Argument('-wz', '--wizard', action='store_true'),
-        Argument('-mp', '--m_perms', argType=str)
+        Argument('-mp', '--m_perms', argumentType=str)
     ],
     'Specifics.Views': [
         Argument('-v', '--view', action='store_true'),
-        Argument('-vm', '--view_model', argType=str),
+        Argument('-vm', '--view_model', argumentType=str),
         Argument('-wv', '--wizard_view', action='store_true'),
-        Argument('-iv', '--inherit_view', argType=str),
+        Argument('-iv', '--inherit_view', argumentType=str),
     ],
     'Specifics.Security': [
         Argument('-s', '--security', action='store_true'),
-        Argument('-id', '--line_id', argType=str),
-        Argument('-ln', '--line_name', argType=str),
-        Argument('-mid', '--model_id', argType=str),
-        Argument('-gid', '--group_id', argType=str),
+        Argument('-id', '--line_id', argumentType=str),
+        Argument('-ln', '--line_name', argumentType=str),
+        Argument('-mid', '--model_id', argumentType=str),
+        Argument('-gid', '--group_id', argumentType=str),
         Argument('-pr', '--perm-read', action='store_true'),
         Argument('-pw', '--perm-write', action='store_true'),
         Argument('-pc', '--perm-create', action='store_true'),
