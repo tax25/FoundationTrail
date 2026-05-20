@@ -11,6 +11,9 @@ class Argument:
     argumentType: type = type
     action: str = ''
 
+class ArgumentHasNoTypeOrAction(BaseException):
+    pass
+
 # NOTE:
 '''
 To be able to use the groups of argparse, this has to be done:
@@ -69,6 +72,12 @@ ARGUMENTS_DESCR = {
 }
 
 class ValueNotAllowedError(BaseException):
+    pass
+
+class PropertiesAndArgumentsNotAlignedError(BaseException):
+    pass
+
+class ParamNameNotValid(BaseException):
     pass
 
 class FTArguments:
@@ -143,8 +152,9 @@ class FTArguments:
         class_props = self._fn_get_class_props_list()
         
         if len(class_props) != len(cli_args):
-            print("ERROR: Contents of ARGUMENTS_DESCR and respective class properties do not match!")
-            return
+            raise PropertiesAndArgumentsNotAlignedError(
+                "Contents of ARGUMENTS_DESCR and class properties do not match!"
+            )
         
         for arg in cli_args:
             if arg.action:
@@ -162,28 +172,51 @@ class FTArguments:
                 )
             
             else:
-                print("ERROR: argument description needs either type or action")
-                return
+                raise ArgumentHasNoTypeOrAction(
+                    "ERROR: argument description needs either type or action"
+                )
         
         _ = self._parser.parse_args(namespace=self)
     
     def fn_args_from_interactive(self, interactive_conf: list[InteractiveProp]):
         for param in interactive_conf:
-            query_string = \
-                    "{main_query}{optional_specifier}{yes_or_no}: ".format(
-                            main_query=param.query_msg,
-                            optional_specifier='[Optional]' if param.is_optional else '',
-                            yes_or_no='[y/n]' if param.prop_type == bool else ''
-                        )
+            if param.prop_name not in __class__.__dict__.keys():
+                raise ParamNameNotValid(f'{param.prop_name} is not valid {self.__dict__.keys()}.')
 
-            param_val = input(query_string)
-            
+            query_string = \
+                "{main_query}{optional_specifier}{yes_or_no}: ".format(
+                        main_query=param.query_msg,
+                        optional_specifier='[Optional]' if param.is_optional else '',
+                        yes_or_no='[y/N]' if param.prop_type == bool else ''
+                    )
+
+            while True:
+                param_val = input(query_string)
+                
+                if not param_val and param.is_optional:
+                    break
+
+                if param.prop_type == bool:
+                    match param_val:
+                        case 'y' | 'Y' | 'yes':
+                            param_val = True
+                            break
+                        case 'n' | 'N' | 'no':
+                            break
+                        case _:
+                            continue 
+
             if type(param_val) != param.prop_type:
                 raise TypeError()
 
-            if len(param.allowed_vals) > 0 and param_val not in param.allowed_vals:
-                raise ValueNotAllowedError(f"{param_val} is not between the allowed values ({param.allowed_vals})")
-
+            if (
+                len(param.allowed_vals) > 0 and
+                param_val not in param.allowed_vals
+            ):
+                raise ValueNotAllowedError(
+                    f"{param_val} is not between the allowed values ({param.allowed_vals})"
+                )
+                        
             setattr(self, param.prop_name, param_val)
 
     def fn_get_module_props_in_dict(self) -> dict[str, str | bool]:

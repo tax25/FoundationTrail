@@ -12,6 +12,7 @@ from foundationTrail.operationHandlers.module.generator \
 
 from foundationTrail.operationHandlers.model.generator \
         import handle_generate_model
+from foundationTrail.operationHandlers.model.interactive_config import INTERACTIVE_CONFIG as model_interactive_config
 
 from foundationTrail.operationHandlers.security.generator \
         import handle_generate_security
@@ -61,6 +62,7 @@ def foundationTrail_entrypoint() -> None:
         if cli_args.module:
             handle_generate_module(**cli_args.fn_get_module_props_in_dict()) # pyright: ignore[reportArgumentType]
         elif cli_args.model:
+            cli_args.fn_args_from_interactive(model_interactive_config)
             handle_generate_model(**cli_args.fn_get_model_props_in_dict()) # pyright: ignore[reportArgumentType]
         elif cli_args.view:
             handle_generate_view(**cli_args.fn_get_view_props_in_dict()) # pyright: ignore[reportArgumentType]
