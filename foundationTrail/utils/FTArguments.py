@@ -68,6 +68,9 @@ ARGUMENTS_DESCR = {
     ],
 }
 
+class ValueNotAllowedError(BaseException):
+    pass
+
 class FTArguments:
     help: bool = False
     version: bool = False
@@ -173,12 +176,15 @@ class FTArguments:
                             yes_or_no='[y/n]' if param.prop_type == bool else ''
                         )
 
-            _param_val = input(query_string)
+            param_val = input(query_string)
             
-            # TODO: implement checking if the inserted value is compliant with the specified `prop_type` 
-            # and that if any `allowed_vals` are specified, that the inserted value is within those as well.
-            # Moreover, implement assign the inserted value to the right property of the `FTArgument` instance.
-            pass
+            if type(param_val) != param.prop_type:
+                raise TypeError()
+
+            if len(param.allowed_vals) > 0 and param_val not in param.allowed_vals:
+                raise ValueNotAllowedError(f"{param_val} is not between the allowed values ({param.allowed_vals})")
+
+            setattr(self, param.prop_name, param_val)
 
     def fn_get_module_props_in_dict(self) -> dict[str, str | bool]:
         return {
