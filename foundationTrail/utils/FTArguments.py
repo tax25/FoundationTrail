@@ -1,6 +1,8 @@
 from argparse import ArgumentParser
 from typing import override
 
+from foundationTrail.utils.FTConfig import FTConfig
+
 class Argument:
     shortForm: str = ''
     longForm: str = ''
@@ -142,7 +144,7 @@ class FTArguments:
         return flattened
 
 
-    def __init__(self):
+    def __init__(self, configurationVals: FTConfig):
         cli_args: list[Argument] = self._fn_flatten_args_descr(ARGUMENTS_DESCR)
 
         class_props = self._fn_get_class_props_list()

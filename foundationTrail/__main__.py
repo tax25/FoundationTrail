@@ -6,6 +6,7 @@ from foundationTrail import (
 )
 
 from foundationTrail.utils.FTArguments import FTArguments
+from foundationTrail.utils.FTConfig import FTConfig
 
 from foundationTrail.operationHandlers.module.generator \
         import handle_generate_module
@@ -33,6 +34,7 @@ def foundationTrail_entrypoint() -> None:
         send_help()
         sys.exit()
     
+    _configuration = FTConfig()
     cli_args = FTArguments()
     
     if cli_args.version:
