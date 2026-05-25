@@ -4,14 +4,20 @@ from typing import override
 
 FT_CONFIG_FILE_PATH = '~/.config/FoundationTrail/config.toml'
 CONFIGURATION_LABEL = 'configuration'
+OPTIONS_LABEL = 'options'
 
 ERR_ODOO_CONF_PATH_NON_EXISTENT = "The path specified for the Odoo configuration file ('{path}') is *non* existent."
+ERR_ODOO_CONF_FILE_NOT_VALID = 'The contents of the configuration file specified make up for an invalid configuration.'
 
 class OdooConfPathNonExistentError(BaseException):
     pass
 
+class OdooConfFileNotValid(BaseException):
+    pass
+
 class FTConfig:
     conf_odoo_conf_path: str = ''
+    conf_odoo_conf: OdooConf
 
     def __init__(self):
         configuration_file_path = expanduser(FT_CONFIG_FILE_PATH)
@@ -31,6 +37,7 @@ class FTConfig:
                 raise OdooConfPathNonExistentError(ERR_ODOO_CONF_PATH_NON_EXISTENT.format(path=tmp_odoo_conf_path))
 
             self.conf_odoo_conf_path = tmp_odoo_conf_path
+            self.conf_odoo_conf = OdooConf(tmp_odoo_conf_path)
 
     @override
     def __str__(self) -> str:
@@ -42,3 +49,19 @@ class FTConfig:
 
         return str_to_return
 
+class OdooConf:
+    addon_paths: list[str]
+
+    def __init__(self, conf_path: str):
+        if not isfile(conf_path):
+            raise OdooConfPathNonExistentError(ERR_ODOO_CONF_PATH_NON_EXISTENT.format(path=conf_path))
+
+        with open(conf_path, 'rb') as conf_file:
+            conf_values = load_toml(conf_file)
+            if OPTIONS_LABEL not in conf_values:
+                raise OdooConfFileNotValid(ERR_ODOO_CONF_FILE_NOT_VALID)
+
+            addons_path: str = conf_values['options'].get('addons_path', '') # pyright: ignore[reportAny]
+            addons_paths: list[str] = addons_path.split(',')
+
+            self.addon_paths = addons_paths
