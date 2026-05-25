@@ -34,8 +34,8 @@ def foundationTrail_entrypoint() -> None:
         send_help()
         sys.exit()
     
-    _configuration = FTConfig()
-    cli_args = FTArguments()
+    configuration = FTConfig()
+    cli_args = FTArguments(configuration)
     
     if cli_args.version:
         print(
