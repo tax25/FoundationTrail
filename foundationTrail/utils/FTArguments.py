@@ -1,25 +1,19 @@
 from argparse import ArgumentParser
+from dataclasses import dataclass
 from typing import override
 
 from foundationTrail.utils.FTConfig import FTConfig
+from foundationTrail.utils.InteractiveModeUtils import InteractiveProp
 
+@dataclass
 class Argument:
     shortForm: str = ''
     longForm: str = ''
     argumentType: type = type
     action: str = ''
-    
-    def __init__(self,
-             short: str, 
-             long: str, 
-             argType: type = type,
-             action: str=''
-    ):
-        self.shortForm = short
-        self.longForm = long
-        self.argumentType = argType
-        self.action = action
 
+class ArgumentHasNoTypeOrAction(BaseException):
+    pass
 
 # NOTE:
 '''
@@ -36,9 +30,9 @@ ARGUMENTS_DESCR = {
         Argument('-h', '--help', action='store_true'),
         Argument('-V', '--version', action='store_true'),
         Argument('-I', '--interactive', action='store_true'),
-        Argument('-e', '--explain', argType=str),
-        Argument('-n', '--name', argType=str),
-        Argument('-fn', '--filename', argType=str),
+        Argument('-e', '--explain', argumentType=str),
+        Argument('-n', '--name', argumentType=str),
+        Argument('-fn', '--filename', argumentType=str),
     ],
     'Basic Actions': [
         Argument('-g', '--generate', action='store_true'),
@@ -46,37 +40,46 @@ ARGUMENTS_DESCR = {
     'Specifics.Modules': [
         Argument('-M', '--module', action='store_true'), 
         Argument('-a', '--app', action='store_true'),
-        Argument('-d', '--deps', argType=str),
-        Argument('-A', '--author', argType=str),
-        Argument('-mv', '--m_version', argType=str),
-        Argument('-D', '--description', argType=str),
-        Argument('-c', '--category', argType=str),
+        Argument('-d', '--deps', argumentType=str),
+        Argument('-A', '--author', argumentType=str),
+        Argument('-mv', '--m_version', argumentType=str),
+        Argument('-D', '--description', argumentType=str),
+        Argument('-c', '--category', argumentType=str),
     ],
     'Specifics.Models': [
         Argument('-m', '--model', action='store_true'), 
-        Argument('-mt', '--model_type', argType=str),
-        Argument('-i', '--inherit', argType=str),
+        Argument('-mt', '--model_type', argumentType=str),
+        Argument('-i', '--inherit', argumentType=str),
         Argument('-wz', '--wizard', action='store_true'),
-        Argument('-mp', '--m_perms', argType=str)
+        Argument('-mp', '--m_perms', argumentType=str)
     ],
     'Specifics.Views': [
         Argument('-v', '--view', action='store_true'),
-        Argument('-vm', '--view_model', argType=str),
+        Argument('-vm', '--view_model', argumentType=str),
         Argument('-wv', '--wizard_view', action='store_true'),
-        Argument('-iv', '--inherit_view', argType=str),
+        Argument('-iv', '--inherit_view', argumentType=str),
     ],
     'Specifics.Security': [
         Argument('-s', '--security', action='store_true'),
-        Argument('-id', '--line_id', argType=str),
-        Argument('-ln', '--line_name', argType=str),
-        Argument('-mid', '--model_id', argType=str),
-        Argument('-gid', '--group_id', argType=str),
+        Argument('-id', '--line_id', argumentType=str),
+        Argument('-ln', '--line_name', argumentType=str),
+        Argument('-mid', '--model_id', argumentType=str),
+        Argument('-gid', '--group_id', argumentType=str),
         Argument('-pr', '--perm-read', action='store_true'),
         Argument('-pw', '--perm-write', action='store_true'),
         Argument('-pc', '--perm-create', action='store_true'),
         Argument('-pu', '--perm-unlink', action='store_true'),
     ],
 }
+
+class ValueNotAllowedError(BaseException):
+    pass
+
+class PropertiesAndArgumentsNotAlignedError(BaseException):
+    pass
+
+class ParamNameNotValid(BaseException):
+    pass
 
 class FTArguments:
     help: bool = False
@@ -150,8 +153,9 @@ class FTArguments:
         class_props = self._fn_get_class_props_list()
         
         if len(class_props) != len(cli_args):
-            print("ERROR: Contents of ARGUMENTS_DESCR and respective class properties do not match!")
-            return
+            raise PropertiesAndArgumentsNotAlignedError(
+                "Contents of ARGUMENTS_DESCR and class properties do not match!"
+            )
         
         for arg in cli_args:
             if arg.action:
@@ -169,10 +173,52 @@ class FTArguments:
                 )
             
             else:
-                print("ERROR: argument description needs either type or action")
-                return
+                raise ArgumentHasNoTypeOrAction(
+                    "ERROR: argument description needs either type or action"
+                )
         
         _ = self._parser.parse_args(namespace=self)
+    
+    def fn_args_from_interactive(self, interactive_conf: list[InteractiveProp]):
+        for param in interactive_conf:
+            if param.prop_name not in __class__.__dict__.keys():
+                raise ParamNameNotValid(f'{param.prop_name} is not valid {self.__dict__.keys()}.')
+
+            query_string = \
+                "{main_query}{optional_specifier}{yes_or_no}: ".format(
+                        main_query=param.query_msg,
+                        optional_specifier='[Optional]' if param.is_optional else '',
+                        yes_or_no='[y/N]' if param.prop_type == bool else ''
+                    )
+
+            while True:
+                param_val = input(query_string)
+                
+                if not param_val and param.is_optional:
+                    break
+
+                if param.prop_type == bool:
+                    match param_val:
+                        case 'y' | 'Y' | 'yes':
+                            param_val = True
+                            break
+                        case 'n' | 'N' | 'no':
+                            break
+                        case _:
+                            continue 
+
+            if type(param_val) != param.prop_type:
+                raise TypeError()
+
+            if (
+                len(param.allowed_vals) > 0 and
+                param_val not in param.allowed_vals
+            ):
+                raise ValueNotAllowedError(
+                    f"{param_val} is not between the allowed values ({param.allowed_vals})"
+                )
+                        
+            setattr(self, param.prop_name, param_val)
 
     def fn_get_module_props_in_dict(self) -> dict[str, str | bool]:
         return {

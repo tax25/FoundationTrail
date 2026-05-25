@@ -160,7 +160,7 @@ if __name__ == '__main__':
         name='my_module_name',
         version='0.2',
         description="this is the description",
-        author='il tuo autore',
+        author='your author',
         website='https://yourwebsite.com/',
         license='LGPL-3',
         category='this is the category',
