@@ -82,6 +82,7 @@ class ParamNameNotValid(BaseException):
     pass
 
 class FTArguments:
+    odoo_conf: FTConfig
     help: bool = False
     version: bool = False
     interactive: bool = False
@@ -148,6 +149,7 @@ class FTArguments:
 
 
     def __init__(self, configurationVals: FTConfig):
+        self.odoo_conf = configurationVals
         cli_args: list[Argument] = self._fn_flatten_args_descr(ARGUMENTS_DESCR)
 
         class_props = self._fn_get_class_props_list()
@@ -220,8 +222,9 @@ class FTArguments:
                         
             setattr(self, param.prop_name, param_val)
 
-    def fn_get_module_props_in_dict(self) -> dict[str, str | bool]:
+    def fn_get_module_props_in_dict(self) -> dict[str, str | bool | FTConfig]:
         return {
+            'configuration': self.odoo_conf,
             'name': self.name,
             'app': self.app,
             'deps': self.deps,
@@ -231,8 +234,9 @@ class FTArguments:
             'category': self.category,
         }
     
-    def fn_get_model_props_in_dict(self):
+    def fn_get_model_props_in_dict(self) -> dict[str, str | bool | FTConfig]:
         return {
+            'configuration': self.odoo_conf,
             'name': self.name,
             'model_type': self.model_type,
             'inherit': self.inherit,
@@ -241,8 +245,9 @@ class FTArguments:
             'm_perms': self.m_perms,
         }
     
-    def fn_get_security_props_in_dict(self):
+    def fn_get_security_props_in_dict(self) -> dict[str, str | bool | FTConfig]:
         return {
+            'configuration': self.odoo_conf,
             'security_file_name': self.filename.replace('.csv', '') if self.filename else 'ir.model.access',
             'line_id': self.line_id,
             'line_name': self.line_name,
@@ -254,8 +259,9 @@ class FTArguments:
             'perm_unlink': self.perm_unlink,
         }
     
-    def fn_get_view_props_in_dict(self):
+    def fn_get_view_props_in_dict(self) -> dict[str, str | bool | FTConfig]:
         return {
+            'configuration': self.odoo_conf,
             'view_name': self.filename.replace('.xml', '') if self.filename else self.name.replace('.xml', ''),
             'model': self.view_model if self.view_model else '',
             'inherit_id': self.inherit_view,
@@ -263,7 +269,7 @@ class FTArguments:
         }
 
     @override
-    def __str__(self):
+    def __str__(self) -> str:
         str_to_return = f"""
             {{
                 version: {self.version},

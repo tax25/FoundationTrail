@@ -3,6 +3,7 @@ import os
 
 # from foundationTrail.operationHandlers.module.utils.ManifestObj import ManifestObj
 from foundationTrail.utils.ManifestUtils import Manifest
+from foundationTrail.utils.FTConfig import FTConfig
 
 from foundationTrail.operationHandlers.module.constants import (
     # MISCELLANEOUS
@@ -19,10 +20,15 @@ from foundationTrail.operationHandlers.module.constants import (
     
     # ERRORS
     ERR_MODULE_NAME_NOT_VALUED,
-    ERR_MODULE_WITH_SAME_NAME_EXISTS
+    ERR_MODULE_WITH_SAME_NAME_EXISTS,
+    ERR_SPECIFIED_DEPENDENCY_DOES_NOT_EXIST
 )
 
+class DependencyNonExistentError(BaseException):
+    pass
+
 def handle_generate_module(
+    configuration: FTConfig,
     name: str,
     app: bool,
     deps: str,
@@ -71,17 +77,15 @@ def handle_generate_module(
     with open(module_path + '/__init__.py', 'w') as init_file:
         _ = init_file.write(MAIN_INIT_FILE_CONTENTS)
     
-    # TODO: implement dependencies checks
-    # For every module specified in `depends`, check if it is in the addons folder(s).
-    # **BUT** to be able to check this effectively, FoundationTrail has to know the 
-    # name(s) of the directories that hold the addons.
-    # This can be done by searching for the `odoo.conf` file.
-    # Where can this file be?
-    # Or maybe, which would probably be better, the user has to specify the configuration file
-    # path.
-    # This can be done with a flag (there's way too many flags in this project lmao), **or**
-    # a configuration file in something like `~/.config/foundationTrail/conf.toml`.
-    # This opens a whole new world of possibilities of configuration.
+    for dependency in deps:
+        for addons_path in configuration.conf_odoo_conf.addon_paths:
+            if not os.path.isdir(f'{addons_path}/{dependency}'):
+                raise DependencyNonExistentError(
+                        ERR_SPECIFIED_DEPENDENCY_DOES_NOT_EXIST.format(
+                            specified_dependency=dependency,
+                            addon_paths=configuration.conf_odoo_conf.addon_paths
+                        )
+                    )
     
     with open(module_path + '/__manifest__.py', 'w') as manifest_file:
         manifest_module_name = module_name.replace('_', ' ').title()

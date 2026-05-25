@@ -44,3 +44,5 @@ ERR_MODULE_NAME_NOT_VALUED = 'The module name is not valued!'
 
 ERR_MODULE_WITH_SAME_NAME_EXISTS = \
         "A module with the name '{module_name}' already exists!"
+
+ERR_SPECIFIED_DEPENDENCY_DOES_NOT_EXIST = "The dependency '{specified_dependency}' was not found in the specified addon paths ({addon_paths})."
