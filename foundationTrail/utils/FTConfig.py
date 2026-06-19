@@ -1,7 +1,7 @@
 from os.path import expanduser, isfile
 from tomllib import load as load_toml
 from typing import override
-from re import search as regex_search
+# from re import search as regex_search
 
 
 FT_CONFIG_FILE_PATH = '~/.config/FoundationTrail/config.toml'
@@ -56,42 +56,47 @@ class FTConfig:
         return str_to_return
 
 class OdooConf:
-    addon_paths: list[str]
+    addon_paths: list[str] = []
     
     def __init__(self, conf_path: str):
         if not isfile(conf_path):
             raise OdooConfPathNonExistentError(ERR_ODOO_CONF_PATH_NON_EXISTENT.format(path=conf_path))
         
         with open(conf_path, 'r') as conf_file:
-            config_dict: dict[str, dict[str, str]] = {}
-            current_section: str = ""
-
             for config_line in conf_file:
-                
-                if config_line.startswith(';'):
-                    # Then it means it is a comment, and should **not** be considered.
-                    continue
-                if config_line.startswith('['):
-                    if new_section_name := regex_search(SECTION_NAME_REGEX, config_line.strip()):
-                        current_section = new_section_name.group(1)
-                        # NOTE: once we get the new section, we go on, as there
-                        # are no actual values in this line.
-                        continue
 
+                if config_line.startswith(';') or       \
+                        config_line.startswith('\n') or \
+                        config_line.startswith('['):
+                    # If we enter this if statement, it means that the line is either:
+                    # 1. a comment
+                    # 2. blank
+                    # 3. a section specifier (which we don't handle at the moment)
+                    continue
+                
                 if not '=' in config_line and not config_line.startswith('['):
                     raise OdooConfFileNotValid(ERR_ODOO_CONF_FILE_NOT_VALID)
 
                 config_line_name, config_line_value = config_line.split('=')
                 
-                if not current_section in config_dict:
-                    config_dict[current_section] = {
-                        config_line_name.strip(): config_line_value
-                    }
-                else:
-                    config_dict[current_section][config_line_name.strip()] = config_line_value
+                self._process_config_line_val(config_line_name.strip(), config_line_value)
+                
+    def _process_config_line_val(self, line_name: str, line_val: str) -> None:
+        match line_name:
+            case 'addon_paths':
+                # NOTE: should we check if the directories exist?
+                tmp = line_val.replace('\n', '').split(',')
+                for index, path in enumerate(tmp):
+                    tmp[index] = path.strip()
 
-            print(config_dict) 
+                self.addon_paths = tmp
+
+            case _:
+                # TODO: handle the case in which the line_name is not recognized
+                # (print a warning?)
+                pass
 
 
 if __name__ == '__main__':
     my_config: FTConfig = FTConfig()
+    print(my_config.conf_odoo_conf.addon_paths)
