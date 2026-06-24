@@ -13,7 +13,9 @@ from foundationTrail.operationHandlers.module.generator \
 
 from foundationTrail.operationHandlers.model.generator \
         import handle_generate_model
-from foundationTrail.operationHandlers.model.interactive_config import INTERACTIVE_CONFIG as model_interactive_config
+
+from foundationTrail.operationHandlers.model.interactive_config \
+        import INTERACTIVE_CONFIG as model_interactive_config
 
 from foundationTrail.operationHandlers.security.generator \
         import handle_generate_security
